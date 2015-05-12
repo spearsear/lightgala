@@ -1,0 +1,41 @@
+<!--<map center="{{decors[0].decor.address.geo.lat}}, {{decors[0].decor.address.geo.lng}}" zoom="12">
+  <marker ng-repeat="decor in decors" position="{{decor.decor.address.geo.lat}}, {{decor.decor.address.geo.lng}}" on-click="click()" title="Click to zoom"></marker>
+</map>-->
+<div class="row">
+  <div class="col-md-12">
+    <div class="row" ng-show="decors.length==0">
+      <div class="col-md-1">
+      </div>
+      <div class="col-md-10 jumbotron top-buffer">
+	<h1>Light up the holiday</h1>
+	<p>You have no decorations yet</p>
+	<a href="/decor" class="btn btn-primary btn-lg">Start Now!</a>
+      </div>
+      <div class="col-md-1"></div>
+    </div>
+    <div class="row" ng-show="decors.length==0">
+      <div class="col-md-1">
+      </div>
+      <div class="col-md-10">
+	<hr>
+	<div ads adname='ads_decor_list'></div>
+	<!-- lighttube-main-horizontal -->
+	<ins class="adsbygoogle"
+	     style="display:inline-block;width:728px;height:90px"
+	     data-ad-client="ca-pub-0546612549381053"
+	     data-ad-slot="5583245631"></ins>
+      </div>
+      <div class="col-md-1">
+      </div>
+    </div>
+    <ui-gmap-google-map center='map.center' zoom='map.zoom'>
+      <!--<ui-gmap-markers models='map.markers' coords="'coords'" options="'options'">
+      </ui-gmap-markers>-->
+	<ui-gmap-marker ng-repeat="marker in map.markers" coords="marker.coords" options="marker.options" idkey="marker.id">
+	  <ui-gmap-window options='map.windowOptions' closeClick="map.closeClick()">
+	    <div><a href='/decor/{{marker.decor_id}}'>{{marker.title}}</a></div>
+	  </ui-gmap-window>
+	</ui-gmap-marker>
+    </ui-gmap-google-map>
+  </div>
+</div>

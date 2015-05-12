@@ -1,0 +1,48 @@
+<div class="container">
+  <div class="row">
+    <div class="center-form panel">
+      <div class="panel-body">
+	<h3 class="text-center">Login</h3>
+	<hr>
+	<div ng-show="!use_auth0">
+	  <div class="row">
+	    <p class='text-center'>Save time by using other internet accounts:</p>
+	  </div>
+	  <div class="row">
+	    <div class="text-center col-md-3 bottom-buffer"><img src='/img/fb29.png' width='32' height='32' ng-click="login_facebook()" data-placement="bottom" data-content="facebook" data-trigger="hover" data-animation="anim-flip-x" bs-popover></img></div>
+	    <div class="text-center col-md-3 bottom-buffer"><img src='/img/googleplus.png' width='32' height='32' ng-click="login_google()" data-placement="bottom" data-content="Google" data-trigger="hover" data-animation="anim-flip-x" bs-popover></img></div>
+	    <div class="text-center col-md-3 bottom-buffer"><img src='/img/amazon.png' width='32' height='32' ng-click="login_amazon()" data-placement="bottom" data-content="Amazon" data-trigger="hover" data-animation="anim-flip-x" bs-popover></img></div>
+	    <div class="text-center col-md-3 bottom-buffer"><img src='/img/instagram.png' width='32' height='32' ng-click="login_instagram()" data-placement="bottom" data-content="Instagram" data-trigger="hover" data-animation="anim-flip-x" bs-popover></img></div>
+	    <div class="text-center col-md-3 bottom-buffer"><img src='/img/twitter.png' width='32' height='32' ng-click="login_twitter()" data-placement="bottom" data-content="Twitter" data-trigger="hover" data-animation="anim-flip-x" bs-popover></img></div>
+	    <div class="text-center col-md-3 bottom-buffer"><img src='/img/yahoo.png' width='32' height='32' ng-click="login_yahoo()" data-placement="bottom" data-content="Yahoo!" data-trigger="hover" data-animation="anim-flip-x" bs-popover></img></div>
+	    <div class="text-center col-md-3 bottom-buffer"><img src='/img/windowslive.png' width='32' height='32' ng-click="login_windowslive()" data-placement="bottom" data-content="WindowsLive" data-trigger="hover" data-animation="anim-flip-x" bs-popover></img></div>
+	    <div class="text-center col-md-3 bottom-buffer"><img src='/img/linkedin.png' width='32' height='32' ng-click="login_linkedin()" data-placement="bottom" data-content="LinkedIn" data-trigger="hover" data-animation="anim-flip-x" bs-popover></img></div>
+	  </div>
+	  <hr>
+	</div>
+	<div ng-show="use_auth0">
+	  <button type="button" class='btn btn-default btn-block btn-success' ng-click="login_auth0()">Save time by using other internet accounts</button>
+	  <hr>
+	</div>
+	<p class='text-center'>Or, create your account with us:</p>
+	<form method="post" ng-submit="login()" name="loginForm">
+	  <div class="form-group" ng-class="{ 'has-success':loginForm.email.$valid && loginForm.email.$dirty,'has-error':loginForm.email.$invalid && loginForm.email.$dirty }">
+	    <input class="form-control" type="email" name="email"
+		   ng-model="email" placeholder="Email" required autofocus>
+	    <div class="help-block text-danger" ng-if="loginForm.email.$dirty" ng-messages="loginForm.email.$error">
+	      <div ng-message="required">Your email address is required.</div>
+	      <div ng-message="email">Your email address is invalid.</div>
+	    </div>
+	  </div>
+	  <div class="form-group">
+	    <input class="form-control" type="password" name="password"
+		   ng-model="password" placeholder="Password" required>
+	  </div>
+	  <button type="submit" ng-disabled="loginForm.$invalid"
+		  class="btn btn-default btn-block btn-success">Sign In
+	  </button>
+	</form>
+      </div>
+    </div>
+  </div>
+</div>

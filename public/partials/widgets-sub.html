@@ -1,0 +1,13 @@
+<div class="popover widgets-sub">
+  <div class="arrow"></div>
+  <h3 class="popover-title"><strong>choose a widget</strong></h3>
+  <div class="popover-content">
+    <div class="row">
+      <div ng-repeat="sc in w.subcats">
+	<div class="subcat left-buffer {{w.name==current.widget.line_type && sc.name==current.widget.line_subtype ? 'selected' : ''}}" ng-click="$event.stopPropagation();selectSubCat(sc.name);$hide();$event.stopPropagation();">
+	  <span class="glyphicon {{sc.icon}}"></span> {{sc.name}}
+	</div>
+      </div>
+    </div>
+  </div>
+</div>

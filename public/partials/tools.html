@@ -1,0 +1,26 @@
+<div class='container endtools col-md-12 btn-toolbar' role='toolbar'>
+  <div class='btn-group'>
+    <!--<button ng-repeat="t in data.tools | filter: toolWithoutOptions" popover-trigger='mouseenter' popover-placement="bottom" type='button' ng-click='selectTool(t.name)' popover='{{getToolInstructions(t.name)}}' class='tool btn btn-default' name='{{t.name}}'>-->
+    <!--use angulat bootstrap tpls-->
+    <button type='button' class='tool btn btn-default' ng-repeat="t in data.tools | filter: toolOfMode | filter: toolWithoutOptions" data-trigger="hover" data-placement="bottom" data-animation="am-flip-x" data-content='{{getToolInstructions(t.name)}}' ng-click='selectTool(t.name)' name='{{t.name}}' bs-popover>
+      <!--<span class='glyphicon {{t.icon}}'></span>-->
+      <span class='glyphicon {{getToolIcon(t.name)}}'></span>
+    </button>
+  </div>
+    <!--tools with submenu need to be wrapped inside btn-group-->
+    <div class='btn-group' ng-repeat='t in data.tools | filter: toolOfMode | filter: toolWithOptions' name='{{t.name}}'>
+	<button id='tool-{{t.name}}' type='button' class='tool btn btn-default' ng-click='attachToolMenu(t.name)'>
+	  <!--<span class='glyphicon {{t.icon}}'></span>-->
+	  <span class='glyphicon {{getToolIcon(t.name)}}'></span>
+	  <span class='caret'></span>
+	</button>
+	<div id='options-{{t.name}}' class='tool dropdown-menu' role='menu'>
+	  <a ng-repeat='option in t.options' ng-click='selectTool(option.name)' toolbox-name='{{t.name}}' name='{{option.name}}' class='tool-option btn btn-default'><span class='glyphicon {{option.icon}}'></span></a>
+	</div>
+    </div>
+    <!--hidden input file for cameraTool-->
+    <div style="display:none">
+      <input type="file" id="background_img_file" name="background_img_file">
+      <div id="progress_bar"><div class="percent" style="height:3px">0%</div></div>
+    </div>
+</div>

@@ -1,0 +1,110 @@
+.rgchooser-visible,
+.rgchooser-visible .dropdown-menu {
+  display: block !important;
+}
+.rgchooser {
+  top: 0;
+  left: 0;
+  cursor: crosshair;
+  z-index: 9999;
+  display: none;
+}
+.rgchooser.dropdown {
+  position: absolute;
+}
+.rgchooser .dropdown-menu::after,
+.rgchooser .dropdown-menu::before {
+  content: '';
+  display: inline-block;
+  position: absolute;
+}
+.rgchooser .dropdown-menu::after {
+  clear: both;
+  border: 6px solid transparent;
+  top: -5px;
+  left: 7px;
+}
+.rgchooser .dropdown-menu::before {
+  border: 7px solid transparent;
+  top: -6px;
+  left: 6px;
+}
+.rgchooser .dropdown-menu {
+  position: static;
+  top: 0;
+  left: 0;
+  min-width: 129px;
+  padding: 4px;
+  margin-top: 0;
+}
+.rgchooser-position-top .dropdown-menu::after {
+  border-top: 6px solid #fff;
+  border-bottom: 0;
+  top: auto;
+  bottom: -5px;
+}
+.rgchooser-position-top .dropdown-menu::before {
+  border-top: 7px solid rgba(0, 0, 0, 0.2);
+  border-bottom: 0;
+  top: auto;
+  bottom: -6px;
+}
+.rgchooser-position-right .dropdown-menu::after {
+  border-right: 6px solid #fff;
+  border-left: 0;
+  top: 11px;
+  left: -5px;
+}
+.rgchooser-position-right .dropdown-menu::before {
+  border-right: 7px solid rgba(0, 0, 0, 0.2);
+  border-left: 0;
+  top: 10px;
+  left: -6px;
+}
+.rgchooser-position-bottom .dropdown-menu::after {
+  border-bottom: 6px solid #fff;
+  border-top: 0;
+}
+.rgchooser-position-bottom .dropdown-menu::before {
+  border-bottom: 7px solid rgba(0, 0, 0, 0.2);
+  border-top: 0;
+}
+.rgchooser-position-left .dropdown-menu::after {
+  border-left: 6px solid #fff;
+  border-right: 0;
+  top: 11px;
+  left: auto;
+  right: -5px;
+}
+.rgchooser-position-left .dropdown-menu::before {
+  border-left: 7px solid rgba(0, 0, 0, 0.2);
+  border-right: 0;
+  top: 10px;
+  left: auto;
+  right: -6px;
+}
+
+.rgchooser .svg-Viewer{
+  width: 276px;
+  height: 276px;
+}
+.rgchooser .stopcolor-Ctrl{
+  cursor: pointer;
+  padding-left: 2%;
+}
+.rgchooser circle.rgchooser-Ctrl:hover{
+  cursor: pointer;
+}
+.rgchooser .rgchooser-Reset{
+  cursor: pointer;
+  display: inline-block;
+  width: 5px;
+}
+.rgchooser .stopcolor-Chooser .stopcolor.original{
+  border: solid;
+  border-color: gray;
+  border-width: 2px;
+}
+.rgchooser .stopcolor-ToggleStop {
+	height: 5px;
+}

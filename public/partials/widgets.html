@@ -1,0 +1,83 @@
+<!--USE ANGULAR STRAP COLLAPSE-->
+<button type='button' class='btn btn-default btn-xs' style="display: block; width: 100%;" rg-chooser ng-model='element_config.rgConfigured' run-after='shadowViewFunc()'>Shadow Designer</button>
+<hr style="display: block; height: 1px; border: 0; border-top: 1px solid #ccc; margin: 1em 0; padding: 0;">
+<!--<div>Picture width: {{width}} units<div>
+<div>{{current.widget.line_type}}/{{current.widget.line_subtype}}</div>-->
+<div ng-show='data.decor.num_inches_per_x_unit>0'>Inches per unit of width: {{data.decor.num_inches_per_x_unit}}</div>
+<div class="panel-group" ng-model="data.widgets.activeWidget" bs-collapse>
+  <div class="panel {{w.show_detail ? 'panel-primary' : ''}}" ng-repeat="w in data.widgets" ng-click="selectWidget(w.name)" is-open="w.show_detail">
+    <div class="panel-heading" bs-collapse-toggle>
+      <h8>{{ w.name }}</h8>
+      <button type="button" ng-click="$event.stopPropagation();" class="pull-right btn btn-default btn-xs" data-trigger="click" data-placement="left" data-title="{{popover.title}}" data-content="{{popover.content}}" data-template="../../partials/widgets-sub.html" data-animation="am-flip-x" data-auto-close="1" bs-popover>
+	<span class="glyphicon glyphicon-chevron-left"></span>
+      </button>
+    </div>
+    <div class="panel-collapse" bs-collapse-target>
+      <div class="panel-default">
+    <!-- decor lines section -->
+    <table class='widget_decor_lines table table-striped table-condensed table-hover' ng-show='w.show_detail'>
+      <tr ng-repeat="dl in data.decor.decor_lines | selectDecorLineFilter:w.name" decor_line_id="{{dl.decor_line_id}}">
+	<td ng-show='true'>
+	  <small>
+	    <!--use popOver custom directive-->
+	    <span class="glyphicon icon-wand" decor_line_id="{{dl.decor_line_id}}" pop-over animations="data.animations" animstartsecond="$parent.element_config.anim_start_second" defs="data.defs" select-tool="$parent.selectTool(toolname)"></span>
+	    <span class="glyphicon {{dl.decor_line_visible | show_eye_icon}} toggle-eye" ng-click="toggleDecorLine(dl.decor_line_id)"></span>
+	    <span class="glyphicon glyphicon-trash" ng-click="delDecorLine(dl.decor_line_id)" ng-mouseover="mouseOverDecorLine(dl.decor_line_id)" ng-mouseout="mouseLeaveDecorLine(dl.decor_line_id)"></span>
+	  </small>
+	  <small>
+	    <span class="pull-right">
+	      {{dl.elements.length + ' ' + dl.decor_line_subtype}}
+	    </span>
+	  </small>
+	</td>
+      </tr>
+    </table>        
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--TO DEPRECATE USE OF ACCORDIAN IN UIBOOTSTRAP
+<accordion close-others="true">
+  <accordion-group ng-repeat="w in data.widgets" ng-click="selectWidget(w.name)" is-open="w.show_detail">
+    <accordion-heading>
+      <button class="btn btn-default btn-xs">{{w.name}}</button>
+      <nav ng-click="$event.stopPropagation();" class="pull-right btn-group btn-group-xs nav-collapse collapse yamm" dropdown >
+	<button type="button" class="btn btn-primary btn-xs dropdown-toggle" ng-disabled="disabled">
+	  <span class="glyphicon glyphicon-cog"></span> <span class="caret"></span>
+	</button>
+	<ul class="dropdown-menu mega-menu" role="menu">
+	  <div class="yamm-content">
+	    <div class="row">
+	      <div class="col-md-1 col-sm-1 col-xs-1" ng-repeat='sc in w.subcats'>
+		<a type='button' popover-trigger='mouseenter' popover-placement="bottom" popover='{{sc.name}}' ng-click="selectSubCat(sc.name)" class="btn dtn-default">
+		  <span class="glyphicon {{sc.icon}}"></span>
+		</a>
+	      </div>
+	    </div>
+	  </div>
+	</ul>
+      </nav>
+    </accordion-heading>
+    <table class='widget_decor_lines table table-striped table-condensed table-hover' ng-show='w.show_detail'>
+      <tr ng-repeat="dl in data.decor.decor_lines | selectDecorLineFilter:w.name" decor_line_id="{{dl.decor_line_id}}">
+	<td ng-show='true'>
+	  <small>
+	    <span class="glyphicon icon-wand" decor_line_id="{{dl.decor_line_id}}" pop-over animations="data.animations" animstartsecond="$parent.element_config.anim_start_second" select-tool="$parent.selectTool(toolname)"></span>
+	    <span class="glyphicon {{dl.decor_line_visible | show_eye_icon}} toggle-eye" ng-click="toggleDecorLine(dl.decor_line_id)"></span>
+	    <span class="glyphicon glyphicon-trash" ng-click="delDecorLine(dl.decor_line_id)" ng-mouseover="mouseOverDecorLine(dl.decor_line_id)" ng-mouseout="mouseLeaveDecorLine(dl.decor_line_id)"></span>
+	  </small>
+	  <small>
+	    <span class="pull-right">
+	      {{dl.elements.length + ' ' + dl.decor_line_subtype}}
+	    </span>
+	  </small>
+	</td>
+      </tr>
+    </table>
+  </accordion-group>
+</accordion>-->
+
+<div class='instruction'>{{current.instructions}}</div>
+<div>line_type: {{current.widget.line_type}}</div>
+<div>line_subtype: {{current.widget.line_subtype}}</div>

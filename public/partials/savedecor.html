@@ -1,0 +1,75 @@
+<div class="aside" tabindex="-1" role="dialog">
+  <!--The template is supposed to have a single parent element-->
+  <div class="aside-dialog">
+    <div class="aside-content">
+      <div class="aside-header" ng-show="title">
+        <button type="button" class="close" ng-click="$hide()">&times;</button>
+        <h4 class="aside-title" ng-bind="title">Save decor</h4>
+      </div>
+
+      <div class="aside-body">
+	<form name="savedecorForm">
+	  <div class="panel-body">
+	    <div class="form-group" ng-class="{ 'has-success':savedecorForm.designer.$valid && savedecorForm.designer.$dirty,'has-error':savedecorForm.designer.$invalid && savedecorForm.designer.$dirty }">
+              <input class="form-control imput-sm" id="designer" type="text" name="designer" ng-model="data.decor.designer" placeholder="Designer" required />
+	      <div class="help-block text-danger" ng-if="savedecorForm.designer.$dirty" ng-messages="savedecorForm.designer.$error">
+		<div ng-message="required">Your name is required.</div>
+	      </div>
+	    </div>
+	    <div class="form-group" ng-class="{ 'has-success':savedecorForm.title.$valid && savedecorForm.title.$dirty,'has-error':savedecorForm.title.$invalid && savedecorForm.title.$dirty }">
+              <input class="form-control imput-sm" id="title" type="text" name="title" ng-model="data.decor.title" placeholder="Give your design a name" ng-maxlength="40" required />
+	      <div class="help-block text-danger" ng-if="savedecorForm.title.$dirty" ng-messages="savedecorForm.title.$error">
+		<div ng-message="required">Your design must have a name.</div>
+		<div ng-message="maxlength">Design name can not exceed 40 chracters</div>
+	      </div>
+	    </div>
+	    <div class="form-group" ng-class="{ 'has-success':savedecorForm.desc.$valid && savedecorForm.desc.$dirty,'has-error':savedecorForm.desc.$invalid && savedecorForm.desc.$dirty }">
+	      <textarea class="form-control" rows="3" id="desc" type="text" name="desc" ng-model="data.decor.desc" placeholder="Describe your design" required=""></textarea>
+	      <div class="help-block text-danger" ng-if="savedecorForm.desc.$dirty" ng-messages="savedecorForm.desc.$error">
+		<div ng-message="required">Describe your design</div>
+	      </div>
+	    </div>
+	    <div class="form-group" ng-class="{ 'has-success':savedecorForm.address.$valid && savedecorForm.address.$dirty,'has-error':savedecorForm.address.$invalid && savedecorForm.address.$dirty }">
+              <input class="form-control imput-sm" id="address" type="text" name="address" ng-model="data.decor.address" ng-model-options="{debounce: 150}" placeholder="Address of your design" required="" data-animation="am-flip-x"  ng-options="address as address.label for address in getAddress($viewValue)" bs-typeahead/>
+	      <div class="help-block text-danger" ng-if="savedecorForm.address.$dirty" ng-messages="savedecorForm.address.$error">
+		<div ng-message="required">Address is required</div>
+	      </div>
+	    </div>
+	    <div class="form-group" ng-class="{ 'has-success':savedecorForm.tag.$valid && savedecorForm.tag.$dirty,'has-error':savedecorForm.tag.$invalid && savedecorForm.tag.$dirty }">
+              <input class="form-control imput-sm" id="tag" type="text" name="tag" ng-model="data.decor.tag" placeholder="Tag your design" required="" />
+	      <div class="help-block text-danger" ng-if="savedecorForm.tag.$dirty" ng-messages="savedecorForm.tag.$error">
+		<div ng-message="required">Tag is required so we can search your design</div>
+	      </div>
+	    </div>
+	    <div class="form-group" ng-class="{ 'has-success':savedecorForm.emailto.$valid && savedecorForm.emailto.$dirty,'has-error':savedecorForm.emailto.$invalid && savedecorForm.emailto.$dirty }">
+              <input class="form-control imput-sm" id="emailto" type="text" name="emailto" ng-model="data.decor.emailto" ng-pattern="/^(([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5}){1,25})+([,.](([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5}){1,25})+)*$/" placeholder="Send the design to these emails" />
+	      <div class="help-block text-danger" ng-if="savedecorForm.emailto.$dirty" ng-messages="savedecorForm.emailto.$error">
+		<div ng-message="pattern">Enter correct comma separated email addresses</div>
+	      </div>
+	    </div>
+	    <div class="form-group">
+	      <div class="checkbox">
+		<label>
+		  <input id="publish" type="checkbox" name="publish" ng-model="data.decor.publish">Publish this design?
+		</label>
+	      </div>
+	      <div class="checkbox">
+		<label>
+		  <input id="askpro" type="checkbox" name="askpro" ng-model="data.decor.askpro">Ask decor idea from a decor pro?
+		</label>
+	      </div>
+	      <div class="checkbox">
+		<label>
+		  <input id="allowcomment" type="checkbox" name="allowcomment" ng-model="data.decor.allowcomment">Allow comment on this design?
+		</label>
+	      </div>
+	    </div>
+	    <div vc-recaptcha theme="'dark'" key="recaptcha.key" on-create="recaptcha.setWidgetId(widgetId)" on-success="recaptcha.setResponse(response)"></div>
+	    <hr>
+	    <button ng-disabled="savedecorForm.$invalid" class="btn btn-sm btn-primary" ng-click="saveDecor()">Save</button>
+	  </div>
+	</form>
+      </div>
+    </div>
+  </div>
+</div>

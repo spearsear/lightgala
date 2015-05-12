@@ -1,0 +1,20 @@
+extends layout
+
+block content
+  div.container
+    div.navbar-header
+      a.navbar-brand
+        span.glyphicon.glyphicon-film Light
+        strong Gala
+    hr
+    hr
+    hr
+    hr
+    div
+      h1= title
+      h2= error.status
+      h2= message
+      pre #{error}.stack
+      p please send an email to lightgala.com@gmail.com for assistance
+      br
+      a(href='http://lightgala.com:3000') Go back to LightGala

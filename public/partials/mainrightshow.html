@@ -1,0 +1,91 @@
+      <div class="row">
+	<div class="col-md-12 text-center right-pane-heading">
+	  <ul class="list-inline">
+	    <li class="menu-item top-buffer {{item.status}}" ng-repeat="item in menu_groups[0].group_items">{{item.item_name}}</li>
+	  </ul>
+	</div>
+      </div>
+      <div class="row">
+	<div class="col-md-1">
+	</div>
+	<div class="col-md-10 jumbotron top-buffer">
+	  <h1>Light up the holiday</h1>
+	  <p>Let the holiday memory last</p>
+	  <a href="/decor" class="btn btn-primary btn-lg">Start Now!</a>
+	</div>
+	<div class="col-md-1"></div>
+      </div>
+      <div class="row show-area no-padding">
+	<div class="col-md-1"></div>
+	<div class="col-md-10 right-pane-decors-list">
+	  <div class="col-md-12" ng-repeat="feature in decors_featured" ng-show="feature.decors.length>0">
+	    <hr>
+	    <div class="row">
+	      <div class="pull-left">
+		<h5>
+		  <span class="glyphicon glyphicon-user usericon"></span>
+		  <strong> {{feature.feature_name}}</strong>
+		</h5>
+	      </div>
+	      <div class="pull-right">
+		<div>
+		  <button ng-click="subscribeFeature()" class="btn btn-xs btn-success bottom-buffer nopadding">
+		    <span class='glyphicon glyphicon-plus'></span>
+		    Subscribe
+		    <span class='badge'></span>
+		  </button>
+		</div>
+	      </div>
+	    </div>
+	    <div data-disable-ng-animate="true">
+	    <carousel interval="myInterval">
+	      <!-- group.active causing carousel empty-->
+	      <!--<slide ng-repeat="group in feature.groupedDecors track by $index" active="group.active">-->
+	      <slide ng-repeat="group in feature.groupedDecors track by $index">
+		<div class="col-xs-3 col-sm-3 col-md-3 decor-padding top-buffer" ng-repeat="decor in group">
+		  <a href="/decor/{{decor._id}}" class="decor_img">
+		    <img ng-src="{{decor.decor.backgroundurl}}" width="100%">      
+		  </a>
+		  <div class="">
+		    <div><a href="/decor/{{decor._id}}">{{decor.decor.title}}</a></div>
+		    <div><span class="decor-desc-info small">by {{decor.decor.designer}}</span></div>
+		    <div><span class="decor-desc-info small">{{decor.decor.views | formatNumberWithComma}} views, {{decor.decor.last_mod_time | formatDateAsElapsed}}</span></div>
+		  </div>
+		</div>
+	      </slide>
+	    </carousel>  
+	    </div>
+	  </div>
+	  <div class="col-md-12">
+	    <hr>
+	    <div ads adname='ads_decor_list'></div>
+	    <!-- lighttube-main-horizontal -->
+	    <ins class="adsbygoogle"
+		 style="display:inline-block;width:728px;height:90px"
+		 data-ad-client="ca-pub-0546612549381053"
+		 data-ad-slot="5583245631"></ins>
+	  </div>
+	  <div class="col-md-12">
+	    <div><hr><h5><strong> Lights here, lights there, lights everywhere!</strong><h5></div>
+	    <div class="col-xs-3 col-sm3 col-md-3 decor-padding top-buffer" ng-repeat="decor in decors">
+	      <a href="/decor/{{decor._id}}" class="decor_img">
+		<img ng-src="{{decor.decor.backgroundurl}}" width="100%"/>
+	      </a>
+	      <div class="">
+		<div><a href="/decor/{{decor._id}}">{{decor.decor.title}}</a></div>
+		<div><span class="decor-desc-info small">by {{decor.decor.designer}}</span></div>
+		<div><span class="decor-desc-info small">{{decor.decor.views | formatNumberWithComma}} views, {{decor.decor.last_mod_time | formatDateAsElapsed}}</span></div>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+	<div class="col-md-1"></div>
+      </div>
+      <div class="row hidden-xs col-md-12">
+	<hr>
+	<div class="col-md-12 bottom-buffer left-buffer text-center" ng-show="allowLoadMore()">
+	  <button id="loadmoredecor" type="button" class="btn btn-xs btn-default" ng-click="loadMoreDecors()">
+	    Show More
+	  </button>
+	</div>
+      </div>

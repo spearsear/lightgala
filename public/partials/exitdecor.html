@@ -1,0 +1,18 @@
+<div class="modal" tabindex="-1" role="dialog">
+  <!--The template is supposed to have a single parent element-->
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" ng-click="$hide()">&times;</button>
+        <h4 class="modal-title">Exit decor</h4>
+      </div>
+      <div class="modal-body">
+	<div class="alert alert-danger" role="alert">
+	  The decor has been changed, please save it first.
+	</div>
+	<button class="btn btn-primary" ng-click="$hide();selectTool('savetool')">OK, I will save it</button>
+	<button class="btn btn-primary" ng-click="setDirty(false);$hide();selectTool('exittool')">No, I don't want to save</button>
+      </div>
+    </div>
+  </div>
+</div>

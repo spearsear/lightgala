@@ -1,0 +1,28 @@
+.carousel-control.left, .carousel-control.right {
+    background-image:none !important;
+    /*color: #b22222;*/
+}
+.carousel-control {
+    background: transparent;
+    color:#ddd;
+    padding: 4px 0;
+    width:26px;
+    /*top:0;    */
+    top:40%;
+    left:auto;
+    bottom:auto;
+    opacity:1;
+    text-shadow:none;
+}
+
+.carousel-control:hover, .carousel-control:focus   {
+    color:#ddd;
+}
+
+/*.carousel-control.right {
+    right:0px;
+}
+
+.carousel-control.left {
+    right: 20px;
+}*/

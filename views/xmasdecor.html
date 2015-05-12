@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html ng-app="xmasdecorApp">
+<head>
+  <title>Holiday Decoration For Your House</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!--<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">-->
+  <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+  <!--<link href="/css/bootstrap.css" rel="stylesheet">
+  <link href="/css/bootstrap-theme.css" rel="stylesheet">-->
+  <link href="/css/xmasdecor.css" rel="stylesheet">
+  <link href="/css/xmasdecor-font.css" rel="stylesheet">
+  <link href="/css/yamm3.css" rel="stylesheet">
+  <link href="/css/jquery.toolbars.css" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar-wrapper navbar-inverse navbar-fixed-top" role="navigation">
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collpase" >
+	<span class="sr-only">Toggle Navigation</span>
+	<span class="icon-bar"></span>
+	<span class="icon-bar"></span>
+	<span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">Holiday Decorations</a>
+    </div>
+    <!-- Collect the nav inks, forms and other content for toggling -->
+      <div class="collapse navbar-collapse">
+	<div class="nav navbar-nav">
+	  <li class="active"><a href="#"><span class="glyphicon glyphicon-home"></span> Home</a></li>
+	  <li><a href="#"><span class="glyphicon glyphicon-star"> Popular Decorations</span></a></li>
+	  <ul class="dropdown-menu">
+	    <li><a href="#">Company</a></li>
+	    <li><a href="#">Contact Us</a></li>
+	  </ul>
+	</div>
+      </div>
+  </div>
+</nav>
+<div ng-controller="mainCtrl" class="container startmainblock">
+      <div class="row">
+	<div tools class="col-md-12">
+	</div>	
+      </div>
+      <div class="row">
+	<div main-decor decor_id="<%= decor_id %>" class="col-md-10 col-xs-12 myblock2">
+	</div>
+	<div widgets class="col-md-2 col-xs-12 myblock2">
+	</div>
+      </div>
+      <div class="row myblock2">
+	<div links class="col-md-12"></div>
+      </div>
+</div>
+<footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-4">&copy; 2014</div>
+      <div class="col-md-4">
+	<ul class="nav nav-pills">
+	  <li class="active"><a href="#">About Us</a></li>
+	  <li><a href="#">Privacy</a></li>
+	  <li><a href="#">Disclaimer</a></li>
+	</ul>
+      </div>
+      <div class="col-md-4">
+	<h5 class="text-right">Holiday Decorations</h5>
+      </div>
+    </div>
+  </div>
+</footer>
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.10/angular.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.25/angular-route.js"></script>
+  <!--<script src="/js/lib/angular.js"></script>-->
+  <script src="/js/lib/angular-resource.js"></script>
+  <script src="/js/lib/lodash.min.js"></script>
+  <script src="/js/services/d3service.js"></script>
+  <script src="/js/controllers/mainctrl.js"></script>
+  <script src="/js/services/light.js"></script>
+  <script src="/js/services/lightsvgs.js"></script>
+  <script src="/js/services/lightanim.js"></script>
+  <script src="/js/services/decorservice.js"></script>
+  <script src="/js/services/toolservice.js"></script>
+  <script src="/js/services/utilservice.js"></script>
+  <script src="/js/directives/maindecor.js"></script>
+  <script src="/js/directives/animpopover.js"></script>
+  <script src="/js/directives/widgets.js"></script>
+  <script src="/js/directives/tools.js"></script>
+  <script src="/js/directives/links.js"></script>
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="/js/lib/jquery.toolbar.js"></script>
+  <script src="/js/lib/ui-bootstrap.js"></script>
+  <!--<script src="http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.11.0.js"></script>-->
+  <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+  <script src="http://code.createjs.com/soundjs-0.5.2.min.js"></script>
+</body>
+</html>

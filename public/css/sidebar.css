@@ -1,0 +1,73 @@
+/*!
+  Sidebar Styles
+ */
+
+.sidebar {
+    background-color: #f8f8f8;
+}
+
+.sidebar-nav {
+    margin-left: 2px;
+    padding: 0px;
+    text-indent: 12px;
+    list-style: none;
+}
+
+.sidebar-nav .icon {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.sidebar-group-head {
+    text-indent: 8px;
+    font-size: 12px;
+    font-weight: bold;
+    color: #b22222;
+    text-transform: uppercase;
+}
+
+.sidebar-nav div {
+    height: 26px;
+    font-size: 12px;
+    line-height: 26px;
+    color: #666;
+}
+
+.sidebar-nav-item.selected {
+    background-color: #b22222;
+    color: #f8f8f8;
+}
+
+.sidebar-nav-item:hover {
+    background-color: #454545;
+    color: #f8f8f8;
+}
+
+.sidebar-nav > .sidebar-brand {
+    height: 65px;
+    font-size: 18px;
+    line-height: 60px;
+}
+
+.sidebar-nav > .sidebar-brand a {
+    color: #999999;
+}
+
+.sidebar-nav > .sidebar-brand a:hover {
+    color: #fff;
+    background: none;
+}
+
+.right-pane-heading li {
+    height: 33px;
+    font-size: 12px;
+    line-height: 26px;
+    color: #666;
+}
+
+.right-pane-heading li.selected {
+    border-bottom: 3px solid #b22222;
+    background-color: #f8f8f8;
+    font-weight: bold;
+    transition: 0.25s ease;
+}

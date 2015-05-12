@@ -1,0 +1,33 @@
+<div class="modal" tabindex="-1" role="dialog">
+  <!--The template is supposed to have a single parent element-->
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" ng-click="$hide()">&times;</button>
+        <h4 class="modal-title">Choose music for your decor</h4>
+      </div>
+      <div class="modal-body">
+	<div class="row music" ng-repeat="music in current.music.filteredMusics">
+	  <div class="col-md-4 text-left name {{music.url==data.decor.mediaurl? 'selected' : ''}}">
+	    <span class="glyphicon glyphicon-music"></span> <strong>{{music.name}}</strong>
+	  </div>
+	  <div class="col-md-3 text-left author">
+	    <span>{{music.author}}</span>
+	  </div>
+	  <div class="col-md-3 text-left">
+	    <audio controls="controls" preload="none" src="{{music.url}}">
+	      no audio support
+	    </audio>
+	  </div>
+	  <div class="col-md-2 text-center">
+	    <button type="button" class="btn btn-default btn-xs btn-primary pull-right" ng-click="selectMusic(music.name);$hide()">Use</button>
+	  </div>
+	</div>
+	  <pagination total-items="current.music.totalMusics" items-per-page="current.music.musicsPerPage" ng-model="current.music.currentPage" max-size="current.music.maxSize" class="pagination-sm" boundary-links="true" rotate="false"></pagination>
+      </div>
+      <div class="modal-footer">
+	<button class="btn btn-danger" ng-click="selectMusic();$hide()">Choose my own music</button>
+      </div>
+    </div>
+  </div>
+</div>

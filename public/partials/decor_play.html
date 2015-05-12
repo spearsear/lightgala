@@ -1,0 +1,132 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-8" ng-controller="decorCtrl">
+      <div class="row decor_area">
+	<div id="decor_dummy"></div>
+	<div main-decor mode='play' prompt='Loading, please wait...' class="whitebackground decor_svg decormain"></div>
+	<div ads adname='ads_decor'></div>
+	<div class="{{minmaxAdClass()}}">
+	  <!-- lighttube-under-decor -->
+	  <div ng-show="!minAdUnderDecor">
+	  <ins class="adsbygoogle"
+	       style="display:inline-block;width:468px;height:60px"
+	       data-ad-client="ca-pub-0546612549381053"
+	       data-ad-slot="6267903232"></ins>
+	  </div>
+	  <div class="minmax_ad_decor"><span class="{{minmaxAdIcon()}}" ng-click="minmaxAd()"></span></div>
+	</div>
+      </div>
+      <div class="row">
+	<div playtools ></div>
+      </div>
+      <div class="row whitebackground top-buffer">
+	<div class="left-buffer right-buffer">
+	  <div class="row">
+	    <div class="col-md-10">
+	      <h4>{{data.decor.title}}</h4>
+	    </div>
+	    <div class="col-md-2">
+	      <h4 ng-show="data.decor">
+		<a class="pull-right" href="/decor/{{decor_id}}/edit">
+		  <span class='glyphicon glyphicon-pencil'></span>
+		</a>
+	      </h4>
+	    </div>
+	  </div>
+	  <div class="row">
+	    <div class="col-md-12">
+	      <span class="glyphicon glyphicon-user usericon"></span> by {{data.decor.designer}}, updated on: {{data.decor.last_mod_time | formatDate}}, <span class="glyphicon glyphicon-music"></span> {{musicInfo()}}
+	    </div>
+	  </div>
+	  <hr>
+	  <div class="row">
+	    <div class="col-md-12">
+	      {{data.decor.desc}}
+	    </div>
+	  </div>	  
+	  <hr>
+	  <div class="row bottom-buffer">
+	    <div class="col-md-10">
+	      <div ng-if="currentUser">
+		<div ng-show="!isSubscribed()">
+		  <button ng-click="subscribe()" class="btn btn-xs btn-success bottom-buffer nopadding">
+		    <span class='glyphicon glyphicon-plus'></span>
+		    Subscribe
+		    <span class='badge'>{{data.subscribers.length}}</span>
+		  </button>
+		</div>
+		<div ng-show="isSubscribed()">
+		  <button ng-click="unsubscribe()" class="btn btn-xs btn-danger bottom-buffer nopadding">
+		    <span class='glyphicon glyphicon-minus'></span>
+		    Unsubscribe
+		    <span class='badge'>{{data.subscribers.length}}</span>
+		  </button>
+		</div>
+	      </div>
+	    </div>
+	    <div class="col-md-2">
+	      <div class="pull-right">
+		<span class='icon-thumbsup' ng-click="thumbup()">{{data.thumbs.up}}</span>
+		<span class='icon-thumbsdown' ng-click="thumbdown()">{{data.thumbs.down}}</span>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+      </div>
+      <div class="row whitebackground top-buffer">
+	<div class="left-buffer right-buffer" ng-if="data.decor.allowcomment">
+	  <hr>
+	  <div comments></div>
+	  <div id="disqus_thread"></div>
+	  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+	  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+	</div>
+	<div class="left-buffer right-buffer" ng-if="!data.decor.allowcomment">
+	  <h4>Comment:</h4>
+	  <hr>
+	  <button class="btn btn-xs btn-danger bottom-buffer"><span class="glyphicon glyphicon-off"></span> Comment on this design is not allowed</button>
+	</div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="sidebar whitebackground">
+	<div class="row ad_decor_list left-buffer">
+	  <div ads adname='ads_decor_list'></div>
+	  <!-- lighttube-ad-2 -->
+	  <ins class="adsbygoogle"
+	       style="display:inline-block;width:300px;height:250px"
+	       data-ad-client="ca-pub-0546612549381053"
+	       data-ad-slot="2092042436"></ins>
+	</div>
+	<hr>
+	<div class="row hidden-sm decors-list" ng-controller="mainCtrl">
+	  <div ng-repeat="decor in decors | filter: excludeCurrentViewedDecor" class="row hidden-xs decor-related col-md-12">
+	    <div class="col-md-4 bottom-buffer left-buffer">
+	      <a href="/decor/{{decor._id}}">
+		<img ng-src="{{decor.decor.backgroundurl}}" alt="" class="img-responsive">
+	      </a>
+	    </div>
+	    <div class="col-md-7 nopadding decors-list-desc">
+	      <span class="decor-desc-title">
+		<a href="/decor/{{decor._id}}">
+		  {{decor.decor.title}}
+		</a>
+	      </span>
+	      <span class="decor-desc-info small">by {{decor.decor.designer}}</span>
+	      <span class="decor-desc-info small">{{decor.decor.address.label | formatAddress}}</span>
+	      <span class="decor-desc-info small">{{decor.decor.views | formatNumberWithComma}} views, {{decor.decor.last_mod_time | formatDateAsElapsed}}</span>
+	    </div>
+	  </div>
+	  <div class="row hidden-xs col-md-12">
+	    <hr>
+	    <div class="col-md-12 bottom-buffer left-buffer text-center" ng-show="allowLoadMore()">
+	      <button id="loadmoredecor" type="button" class="btn btn-xs btn-default" ng-click="loadMoreDecors()">
+		Show More
+	      </button>
+	    </div>
+	  </div>
+	</div>
+      </div>
+    </div>
+  </div><!--end row-->
+</div>

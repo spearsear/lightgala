@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <filter id='lightshine'>
+      <!--blur effect-->
+      <!--<feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur1" />-->
+      <!--<feSpecularLighting result="specOut" in="blur1" specularExponent="60" lighting-color="#cccccc">-->
+      <feSpecularLighting result="specOut" specularExponent="60" lighting-color="#cccccc">
+	<fePointLight x="50" y="100" z="200"/>
+      </feSpecularLighting>
+      <feComposite in="SourceGraphic" in2="specOut" operator="arithmetic" k1="0" k2="1" k3="1" k4="0"/>
+    </filter>
+    <filter id="lightglow" height="130%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="3" y="-" result="blur">
+	<!--<animate attributeName="stdDeviation" values="0;1;3;0" dur="2s" repeatCount="indefinite" />-->
+      </feGaussianBlur>
+      <!--don't look good, do not combine light shine here
+      <feSpecularLighting result="specOut" in="blur" specularExponent="60" lighting-color="#cccccc">
+	<fePointLight x="50" y="5" z="200"/>
+      </feSpecularLighting>
+      <feComposite in="SourceGraphic" in2="specOut" operator="arithmetic" k1="0" k2="1" k3="1" k4="0"/>-->
+    </filter>
+    <!--not being able to use it-->
+    <filter id="lightbackground">
+      <feGaussianBlur in="BackgroundImage" stdDeviation="3" y="-" result="blur"/>
+      <feOffset in="blur" dx="4" dy="12" result="offsetblur"/>
+      <feMerge> 
+        <feMergeNode in="offsetblur"/>
+        <feMergeNode in="SourceGraphic"/> 
+      </feMerge>
+    </filter>
+    <filter id="dropshadow" width="130%" height="130%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur"/> 
+      <feOffset in="blur" dx="4" dy="12" result="offsetblur"/>
+      <feMerge> 
+        <feMergeNode in="offsetblur"/>
+        <feMergeNode in="SourceGraphic"/> 
+      </feMerge>
+    </filter>
+    <filter id="darker" color-interpolation-filters="sRGB">
+      <feColorMatrix type="saturate" values="0.4"/>
+    </filter>
+    <filter id="bwcontrast">
+      <feColorMatrix type="matrix"
+		     values="-1 0  0  0  0  
+			     0 -1  0  0  0
+			     0  0 -1  0  0  
+			     1  1  1  0  0"/>
+    </filter>
+    <filter id="hyperblue">
+      <feColorMatrix type="matrix"
+		     values="0 0  0  0   0   
+			     0 0  0  0   0  
+			     -1 1.5  1.5  0  -0.5  
+			     0 1  0  1   0"/>
+    </filter>
+    <filter id="kernal">
+       <feConvolveMatrix 
+			 kernelMatrix="      
+				       1 -1 1
+				      -1 -.1 -1
+				       1 -1 1
+				       " />
+    </filter>
+    <pattern id="trash" x='0' y='0' width='14' height='14'>
+      <image x='0' y='0' width='14' height='14' xlink:href='/img/trash.png' />
+    </pattern>
+    <radialGradient id="nightsky2" cy="0.73438" cx="0.64771" r="0.69867" fy="0.39453" fx="0.27271" spreadMethod="pad">
+      <stop offset="0" stop-opacity="0.97656" stop-color="#33547f"/>
+      <stop offset="0.83521" stop-opacity="0.97656" stop-color="#2f2f59"/>
+    </radialGradient>
+    <linearGradient id='nightsky' x1='50%' x2='50%' y1='0%' y2='100%'>
+      <stop class='nightSkyStop1' offset='0%' stop-color='black' stop-opacity='0.85'>
+	<!--<animate attributeName='stop-color' dur='24s' values='lightblue;blue;red;red;black;red;red;purple;lightblue' repeatCount='indefinite'></animate>-->
+      </stop>
+      <stop class='nightSkyStop2' offset='70%' stop-color='black' stop-opacity='0.75'>
+	<!--<animate attributeName='stop-color' dur='24s' values='lightblue;orange;purple;purple;black;purple;purple;blue;lightblue' repeatCount='indefinite'></animate>
+	<animate attributeName='offset' dur='24s' values='.95;.80;.60;.40;.20;0;.20;.40;.60;.80;.95' repeatCount='indefinite'></animate>-->
+      </stop>
+    </linearGradient>
+    <radialGradient  id="fog" gradientTransform="rotate(0.3879310344827669,0.667236328125,0.58203125) translate(0,0.002508755387931088) scale(1,0.9956896551724137)" cy="0.58203" cx="0.66724" r="0.69867" fy="0.13281" fx="0.16333" spreadMethod="pad">
+      <stop offset="0" stop-opacity="0.98828" stop-color="#f2f4f7"/>
+      <stop offset="0.83521" stop-opacity="0.97656" stop-color="#2f2f59"/>
+    </radialGradient>
+  </defs>
+</svg>

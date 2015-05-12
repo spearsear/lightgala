@@ -1,0 +1,21 @@
+<div class="row col-md-12 decor-ctrls nopadding">
+  <!--<div audiovisual>
+  </div>-->
+  <div class="progress">
+    <div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+    </div>
+  </div>
+<div>
+<div class="row col-md-12 decor-ctrls nopadding" id="decor-controls">
+  <div class="col-md-6 left-ctrls">
+    <span ng-repeat="t in data.tools | filter: toolOfMode" ng-mouseenter='toggleToolOptions(t.name)' ng-mouseleave='toggleToolOptions(t.name)' ng-click='selectTool(t.name)' class='tool' name='{{t.name}}'>
+      <span class='{{getToolIcon(t.name)}}'></span>
+      <span ng-repeat="t_option in t.options" class='playToolOptions' ng-click='selectTool(t_option.name)' ng-hide='!t.show_options'>
+	<span class='{{t_option.icon}}'></span>
+      </span>
+    </span>
+  </div>
+  <div class="col-md-6 right-ctrls">
+    <span class="label label-danger pull-right"><span class="glyphicon glyphicon-film"></span> Light<strong>Tube</strong></span>
+  </div>
+</div>

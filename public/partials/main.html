@@ -1,0 +1,24 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-2 left-pane sidebar hidden-sm hidden-xs">
+      <div>
+      <div ng-repeat="group in menu_groups">
+	<h5 class="sidebar-group-head">{{group.group_name}}</h5>
+	  <div class="sidebar-nav" ng-repeat="item in group.group_items">
+	      <div class="sidebar-nav-item {{item.status}}" ng-click="selectItem(item.item_name)">
+		<span class="icon {{item.icon}}"></span>  {{item.item_name}}
+	      </div>
+	  </div>
+	  <hr>
+      </div>
+      </div>
+    </div><!--end menu col-->
+    <div class="col-md-10 right-pane container">
+      <div ng-switch="main_right_partial">
+	<div ng-switch-when="mainrightshow"><div ng-include="'partials/mainrightshow.html'"></div></div>
+	<div ng-switch-when="mainrightmap"><div ng-include="'partials/mainrightmap.html'"></div></div>
+	<div ng-switch-default><div ng-include="'partials/mainrightshow.html'"></div></div>
+      </div>
+    </div><!--end right-pane-->
+  </div><!--end row-->
+</div>
