@@ -1,4 +1,5 @@
 node_modules
+public/bower_components
 private
 howto.txt
 *~
@@ -7,4 +8,3 @@ howto.txt
 public/*.*~
 public/*/*.*~
 .tmp
-bower_components
