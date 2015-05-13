@@ -44,6 +44,9 @@ angular.module("radialgradient.module",["colorpicker.module"])
 				scope.rgdata_temps = [];
 
 				scope.computeColorArray = function(){
+				    if(typeof d3 == "undefined"){
+					return false;
+				    }
 					if(!scope.rgdata.colors){
 						scope.rgdata.colors = [];
 					}
