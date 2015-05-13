@@ -3,7 +3,7 @@ angular.module('d3',[])
 .factory('d3Service',['$document','$q','$rootScope',function($document,$q,$rootScope){
   var ds = [$q.defer()];
   //var d3srcs = ['http://d3js.org/d3.v3.min.js']
-  var d3srcs = ['/js/lib/d3.js']
+  var d3srcs = ['/bower_components/d3/d3.js']
   var onscriptloadfuncs = [];
   //create the script tags for d3 libraries
   var s = $document[0].getElementsByTagName('head')[0];
