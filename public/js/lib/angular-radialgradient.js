@@ -7,6 +7,7 @@ angular.module("radialgradient.module",["colorpicker.module"])
 			require: '?ngModel',
 			restrict: "EA",
 			scope: {
+				d3: '=d3',
 				rgConfigured: '=ngModel',
 				runAfter: '&runAfter'
 			},
@@ -44,9 +45,9 @@ angular.module("radialgradient.module",["colorpicker.module"])
 				scope.rgdata_temps = [];
 
 				scope.computeColorArray = function(){
-				    if(typeof d3 == "undefined"){
-					return false;
-				    }
+					if(typeof d3 == "undefined"){
+						return false;
+					}
 					if(!scope.rgdata.colors){
 						scope.rgdata.colors = [];
 					}
@@ -301,32 +302,34 @@ angular.module("radialgradient.module",["colorpicker.module"])
             		}
 				};
 
-				var radius_scale = d3.scale.linear()
-					.domain([0,1])
-					.range([0,2]);
-				var radius_scale_reverse = d3.scale.linear()
-					.domain([0,2])
-					.range([0,1]);
+				scope.defineScalesAndDrag = function(){
+					scope.radius_scale = d3.scale.linear()
+						.domain([0,1])
+						.range([0,2]);
+					scope.radius_scale_reverse = d3.scale.linear()
+						.domain([0,2])
+						.range([0,1]);
 
-				var opacity_scale = d3.scale.linear()
-					.domain([0,1])
-					.range([0,1]);
-				var opacity_scale_reverse = d3.scale.linear()
-					.domain([0,1])
-					.range([0,1]);
+					scope.opacity_scale = d3.scale.linear()
+						.domain([0,1])
+						.range([0,1]);
+					scope.opacity_scale_reverse = d3.scale.linear()
+						.domain([0,1])
+						.range([0,1]);
 
-				var rotate_scale = d3.scale.linear()
-					.domain([0,1])
-					.range([-360,360]);
-				var rotate_scale_reverse = d3.scale.linear()
-					.domain([-360,360])
-					.range([0,1]);
+					scope.rotate_scale = d3.scale.linear()
+						.domain([0,1])
+						.range([-360,360]);
+					scope.rotate_scale_reverse = d3.scale.linear()
+						.domain([-360,360])
+						.range([0,1]);
 
-				var drag = d3.behavior.drag()
-    				.origin(function(d) { return d; })
-    				.on("dragstart", dragstarted)
-    				.on("drag", dragged)
-    				.on("dragend", dragended);
+					scope.drag = d3.behavior.drag()
+    					.origin(function(d) { return d; })
+    					.on("dragstart", dragstarted)
+    					.on("drag", dragged)
+    					.on("dragend", dragended);
+    			}
 
       			function dragstarted(d) {
       				if(d3.event.sourceEvent){
@@ -356,13 +359,13 @@ angular.module("radialgradient.module",["colorpicker.module"])
   								x_new = scope.rgdata.width*d.x;
   							}
   							if(d.name == 'opacity'){
-  								scope.rgdata.opacity = opacity_scale(d.x);
+  								scope.rgdata.opacity = scope.opacity_scale(d.x);
   								for(var i=0;i<scope.rgdata.stops.length;i++){
   									scope.rgdata.stops[i].opacity = scope.computeStopOpacity(scope.rgdata.stops[i].offset*10);
   								}
   							}
   							if(d.name == 'rotate'){
-  								scope.rgdata.transform.rotate = rotate_scale(d.x);
+  								scope.rgdata.transform.rotate = scope.rotate_scale(d.x);
   							}
   							if(d.name == 'center' || d.name == 'focal'){
   								scope.rgdata[d.name].x = d.x;
@@ -397,7 +400,7 @@ angular.module("radialgradient.module",["colorpicker.module"])
   								y_new = scope.rgdata.width*d.y;
   							}
   							if(d.name=='radius'){
-  								scope.rgdata.radius = radius_scale(d.y);
+  								scope.rgdata.radius = scope.radius_scale(d.y);
   							}
   							if(d.name == 'center' || d.name == 'focal'){
   								scope.rgdata[d.name].y = d.y;
@@ -427,9 +430,8 @@ angular.module("radialgradient.module",["colorpicker.module"])
 				}
 
 				//setup control points to manually change radialgradient
-				var svg = d3.select(".rgchooser svg.svg-Viewer")
-					.attr("width", scope.rgdata.width)
-					.attr("height", scope.rgdata.height);
+				//svg is selected after d3 is available in watch
+				var svg;
 				
 				var controlsEnterFunc = function(){
 					svg.append("g")
@@ -440,9 +442,9 @@ angular.module("radialgradient.module",["colorpicker.module"])
 							angular.extend(scope.rgdata.focal,{name:'focal',ctrl_color:'pink'}),
 							angular.extend(scope.rgdata.transform.translate,{name:'translate',ctrl_color:'blue'}),
 							angular.extend(scope.rgdata.transform.scale,{name:'scale',ctrl_color:'red'}),
-							angular.extend({x:0.02,y:radius_scale_reverse(scope.rgdata.radius)},{name:'radius',ctrl_color:'green'}),
-							angular.extend({x:rotate_scale_reverse(scope.rgdata.transform.rotate),y:0.98},{name:'rotate',ctrl_color:'yellow'}),
-							angular.extend({x:opacity_scale_reverse(scope.rgdata.opacity),y:0.02},{name:'opacity',ctrl_color:'purple'}),
+							angular.extend({x:0.02,y:scope.radius_scale_reverse(scope.rgdata.radius)},{name:'radius',ctrl_color:'green'}),
+							angular.extend({x:scope.rotate_scale_reverse(scope.rgdata.transform.rotate),y:0.98},{name:'rotate',ctrl_color:'yellow'}),
+							angular.extend({x:scope.opacity_scale_reverse(scope.rgdata.opacity),y:0.02},{name:'opacity',ctrl_color:'purple'}),
 						])
 						.enter()
 						.append("circle")
@@ -473,7 +475,7 @@ angular.module("radialgradient.module",["colorpicker.module"])
 						})
 						.attr("stroke","gray")
 						.attr("stroke-width","1")
-						.call(drag)
+						.call(scope.drag)
 						.append("svg:title")
    						.text(function(d) {
    							return d.name; 
@@ -511,6 +513,9 @@ angular.module("radialgradient.module",["colorpicker.module"])
 				};//end controlsEnterFunc
 
 				var controlsUpdateFunc = function(){
+					if(!svg || !scope.radius_scale_reverse){
+						return false;
+					}
 					svg.select("g.rgchooser-Ctrls")
 						.selectAll("circle")
 						.data([
@@ -518,9 +523,9 @@ angular.module("radialgradient.module",["colorpicker.module"])
 							angular.extend(scope.rgdata.focal,{name:'focal',ctrl_color:'pink'}),
 							angular.extend(scope.rgdata.transform.translate,{name:'translate',ctrl_color:'blue'}),
 							angular.extend(scope.rgdata.transform.scale,{name:'scale',ctrl_color:'red'}),
-							angular.extend({x:0.02,y:radius_scale_reverse(scope.rgdata.radius)},{name:'radius',ctrl_color:'green'}),
-							angular.extend({x:rotate_scale_reverse(scope.rgdata.transform.rotate),y:0.98},{name:'rotate',ctrl_color:'yellow'}),
-							angular.extend({x:opacity_scale_reverse(scope.rgdata.opacity),y:0.02},{name:'opacity',ctrl_color:'purple'}),
+							angular.extend({x:0.02,y:scope.radius_scale_reverse(scope.rgdata.radius)},{name:'radius',ctrl_color:'green'}),
+							angular.extend({x:scope.rotate_scale_reverse(scope.rgdata.transform.rotate),y:0.98},{name:'rotate',ctrl_color:'yellow'}),
+							angular.extend({x:scope.opacity_scale_reverse(scope.rgdata.opacity),y:0.02},{name:'opacity',ctrl_color:'purple'}),
 						])
 						//.append("circle")
 						.attr("class",function(d){
@@ -546,32 +551,40 @@ angular.module("radialgradient.module",["colorpicker.module"])
 						});
 				};//end controlsUpdateFunc
 
-				controlsEnterFunc();
-
-				//create a shape filled with #rg-grad-1 as demo
-				svg.append("g")
-					.selectAll("rect.demo")
-					.data([{x:0.05,y:0.75,width:0.2,height:0.2}])
-					.enter()
-					.append("rect")
-					.attr("class","demo")
-					.attr("x",function(d){
-						return d.x*scope.rgdata.width;
-					})
-					.attr("y",function(d){
-						return d.y*scope.rgdata.height;
-					})
-					.attr("width",function(d){
-						return d.width*scope.rgdata.width;
-					})
-					.attr("height",function(d){
-						return d.height*scope.rgdata.height;
-					})
-					//.attr("fill","url(#rg-grad-1)");
-					//.attr("fill","url("+$window.location+"#rg-grad-1)");
-					.attr("fill",function(){
-						return scope.getFillUrl();
-					})
+				scope.$watch("d3.version",function(newVal,oldVal){
+					if(typeof d3 != "undefined"){
+						//render svg when d3 is available
+						svg = d3.select(".rgchooser svg.svg-Viewer")
+							.attr("width", scope.rgdata.width)
+							.attr("height", scope.rgdata.height);
+						//create a shape filled with #rg-grad-1 as demo
+						svg.append("g")
+							.selectAll("rect.demo")
+							.data([{x:0.05,y:0.75,width:0.2,height:0.2}])
+							.enter()
+							.append("rect")
+							.attr("class","demo")
+							.attr("x",function(d){
+								return d.x*scope.rgdata.width;
+							})
+							.attr("y",function(d){
+								return d.y*scope.rgdata.height;
+							})
+							.attr("width",function(d){
+								return d.width*scope.rgdata.width;
+							})
+							.attr("height",function(d){
+								return d.height*scope.rgdata.height;
+							})
+							//.attr("fill","url(#rg-grad-1)");
+							//.attr("fill","url("+$window.location+"#rg-grad-1)");
+							.attr("fill",function(){
+								return scope.getFillUrl();
+							})
+						scope.defineScalesAndDrag();
+						controlsEnterFunc();
+					}
+				},true);
 
 				//after d3 setup
 				//make a copy we can reset to
