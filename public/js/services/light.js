@@ -2,7 +2,7 @@
  *   this file define lightService which provide various kinds of light
  */
 angular.module("lightgalaApp")
-  .factory("lightService",['lightSvgsService','lightAnimService','utilService','$window',function(lightSvgsService,lightAnimService,utilService,$window){
+  .factory("lightService",['lightSvgsService','utilService','$window',function(lightSvgsService,utilService,$window){
     var colorManager = {
 	getColors: function(defs){
 	    //given defs (provided by controller scope), retrieve all colors supported
