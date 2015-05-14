@@ -297,10 +297,10 @@ angular.module("lightgalaApp")
 	              scope.$apply();
 		  }
 		  //start animation of each decor_line by setting active fired at start_seond by timeout service
+		  var anim = lightAnimService.getAnim();
 		  _.forEach(scope.data.decor.decor_lines,function(dl){
 		      //remove all inactive anims dom element
 		      scope.decor_line_anim_enter_func(dl.decor_line_id);
-		      var anim = lightAnimService.getAnim();
 		      //anim.start(scope.data.animations,function(start_second){
 		      anim.start(_.filter(scope.data.animations,function(a){return a.decor_line_id == dl.decor_line_id}),function(start_second){
 			  _.forEach(scope.data.animations.sort(utilService.dynamicSortMultiple("start_second","set","segment")),function(a){
@@ -806,7 +806,7 @@ angular.module("lightgalaApp")
 		scope.svg.select("g.decor g.decor_lines g.decor_line[decor_line_id='"+decor_line_id+"']")
 		    .selectAll("g.decor_line_element:not(.unlightable)").each(function(){
 			var light = lightService.getLight(d3.select(this).data()[0].light_type);
-			d3.select(this).call(light.unemitray).call(light.emitray);
+			d3.select(this).call(light.uncastshadow).call(light.castshadow).call(light.unemitray).call(light.emitray);
 		    });
 	    }
 
@@ -840,7 +840,7 @@ angular.module("lightgalaApp")
 		scope.svg.select("g.decor g.decor_lines g.decor_line[decor_line_id='"+decor_line_id+"']")
 		    .selectAll("g.decor_line_element:not(.unlightable)").each(function(){
 			var light = lightService.getLight(d3.select(this).data()[0].light_type);
-			d3.select(this).call(light.unemitray).call(light.emitray);
+			d3.select(this).call(light.uncastshadow).call(light.castshadow).call(light.unemitray).call(light.emitray);
 		    });
 	    }
 
@@ -903,7 +903,8 @@ angular.module("lightgalaApp")
 		     d3.select(this).attr("transform",function(d){
 		     var outline_ele = d3.select(this).select(".outline").node(),
 		         bbox = outline_ele.getBBox(),
-		         scaleFactor = scope.rScale(d.scale_factor*3);
+		         //scaleFactor = scope.rScale(d.scale_factor*3);
+			 scaleFactor = scope.rScale(d.scale_factor);
 		     return "translate("+scope.xScale(d.x-scope.xScale_reverse(bbox.x+bbox.width/2)-scope.xScale_reverse(bbox.x+bbox.width/2)*(scaleFactor-1))+","+scope.yScale(d.y-scope.yScale_reverse(bbox.y+bbox.height/2)-scope.yScale_reverse(bbox.y+bbox.height/2)*(scaleFactor-1))+") scale("+scaleFactor+") rotate("+scope.element_config.rotate()+","+(bbox.x+bbox.width/2)+","+(bbox.y+bbox.height/2)+")";
 		     });		       
 		   })
