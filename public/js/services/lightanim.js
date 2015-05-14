@@ -2,7 +2,7 @@
  *   this file define lightAnimService which provide various kinds of light animation pattern for each decor_line
  */
 angular.module("lightgalaApp")
-  .factory("lightAnimService",['$timeout','utilService',function($timeout,utilService){
+  .factory("lightAnimService",['$timeout','lightService','utilService',function($timeout,lightService,utilService){
     var basicAnim = {
 	timers: [],
 	init_config: function(){
@@ -263,7 +263,8 @@ angular.module("lightgalaApp")
 	    //start animation defined in animations
 	    var self=this;
 	    var cycle_seconds=_.max(animations,function(anim){return anim.start_second}).start_second + 30;
-	    self.stop(function(){});
+	    //do not stop anim here otherwise timers of other decor_line will be cleared
+	    //self.stop(function(){});
 	    for(var i=0;i<animations.length;i++){
 		self.timers.push($timeout((function(){
 		    var j = i;
