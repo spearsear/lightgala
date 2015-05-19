@@ -99,14 +99,9 @@ angular.module("lightgalaApp")
 	      //update
 	      //decorsListService.update({_id: $scope.decor_id}, $scope.data);
 
-	      /*$scope.data.recaptcha = {
-		  challenge: '',
-		  response: $scope.recaptcha.response
-	      }*/
-
 	      var data_n_captcha = {
 		  data: $scope.data,
-		  recaptcha_response: vcRecaptchaService.getResponse()
+		  recaptcha_response: 0 //vcRecaptchaService.getResponse()
 	      }
 
 	      //decorsListService.update({_id: $scope.decor_id}, $scope.data).$promise.then(function(updatedDecor){
@@ -136,7 +131,7 @@ angular.module("lightgalaApp")
 		      });
 		  }else if(err.status==409){
 		      //recaptcha failed
-		      vcRecaptchaService.reload($scope.recaptcha.widgetId);
+		      //vcRecaptchaService.reload($scope.recaptcha.widgetId);
 		  }else{
 		      $alert({
 			  title: 'Error occurred while saving!',
@@ -160,11 +155,12 @@ angular.module("lightgalaApp")
 	      $scope.data.decor.last_mod_time = new Date();
 	      var data_n_captcha = {
 		  data: $scope.data,
-		  recaptcha_response: vcRecaptchaService.getResponse()
+		  recaptcha_response: 0 //vcRecaptchaService.getResponse()
 	      }
 	      //new decorsListService($scope.data).$save().then(function(newData){
 	      new decorsListService(data_n_captcha).$save().then(function(newData){
 		  $scope.data = newData;
+		  $scope.decor_id = newData._id;
 		  $scope.setDirty(false);
 		  $scope.saveDialog.hide();
 		  decorDataService.resetData();
@@ -176,7 +172,7 @@ angular.module("lightgalaApp")
 		      $location.path('/login/');
 		  }else if(err.status==409){
 		      //recaptcha failed
-		      vcRecaptchaService.reload($scope.recaptcha.widgetId);
+		      //vcRecaptchaService.reload($scope.recaptcha.widgetId);
 		  }else{
 		      $alert({
 			  title: 'Error occurred while saving!',
