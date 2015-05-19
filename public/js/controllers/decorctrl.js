@@ -222,10 +222,12 @@ angular.module("lightgalaApp")
 	      var ele = d3.select("g[decor_line_id='"+$scope.current.decor.line_id+"'][decor_line_element_id='"+$scope.current.decor.line_element_id+"']");
 	      var stops = $scope.element_config.rgConfigured.stops;
 	      var light = lightService.getLight(ele.data()[0].light_type);
-	      var color_def = light.getColorDef(light.color);
-	      if(color_def){
-		  stops[0].color = utilService.hslStringToRgbString(color_def.stopcolor1);
-		  stops[stops.length-1].color = utilService.hslStringToRgbString(color_def.stopcolor2);
+	      if(light.getColorDef){
+		  var color_def = light.getColorDef(light.color);
+		  if(color_def){
+		      stops[0].color = utilService.hslStringToRgbString(color_def.stopcolor1);
+		      stops[stops.length-1].color = utilService.hslStringToRgbString(color_def.stopcolor2);
+		  }
 	      }
 	  }
       }
