@@ -1,10 +1,11 @@
 //======================middleware===================
 //authentication
 var request = require('request');
+var config = require('../config.js');
 //var Recaptcha = require('recaptcha').Recaptcha;
 //google recaptcha site key and secret
-var PUBLIC_KEY  = '6Le3FAETAAAAALObaPdsf277KQlhJ2BN1N90sPda',
-    PRIVATE_KEY = '6Le3FAETAAAAAIWINWxvTGsRCw5aBwhAQbGL4asH';
+var PUBLIC_KEY  = config.GOOGLE_RECAPTCHA.PUBLIC_KEY,
+    PRIVATE_KEY = config.GOOGLE_RECAPTCHA.PRIVATE_KEY;
 
 var myaccessctrl = {
     ensureAuthenticated: function(req,res,next){
