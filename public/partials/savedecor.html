@@ -64,7 +64,8 @@
 		</label>
 	      </div>
 	    </div>
-	    <div vc-recaptcha theme="'dark'" key="recaptcha.key" on-create="recaptcha.setWidgetId(widgetId)" on-success="recaptcha.setResponse(response)"></div>
+	    <!--disable recaptcha, it need https-->
+	    <!--<div vc-recaptcha theme="'dark'" key="recaptcha.key" on-create="recaptcha.setWidgetId(widgetId)" on-success="recaptcha.setResponse(response)"></div>-->
 	    <hr>
 	    <button ng-disabled="savedecorForm.$invalid" class="btn btn-sm btn-primary" ng-click="saveDecor()">Save</button>
 	  </div>
