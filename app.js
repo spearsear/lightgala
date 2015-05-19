@@ -25,10 +25,13 @@ var routes = require("./routes/index");
 var decor = require("./routes/decor");
 var db = require("./db/api");    //mongoskin RESTful service
 var db2 = require("./db/api2");  //mongoose
+var config = require("./config.js");  //config settings
 
 var app = express();
 
-app.set("port",process.env.PORT || 3000);
+app.set("port",config.PORT);
+app.set('port_https',config.PORT_HTTPS);
+app.set('env',config.NODE_ENV);
 //view engine setup
 app.set("views",path.join(__dirname,'views'));
 app.set("view engine",'jade');
