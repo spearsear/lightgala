@@ -155,6 +155,7 @@ angular.module("lightgalaApp")
 	      $scope.data.decor.last_mod_time = new Date();
 	      var data_n_captcha = {
 		  data: $scope.data,
+		  //disable recaptcha
 		  recaptcha_response: 0 //vcRecaptchaService.getResponse()
 	      }
 	      //new decorsListService($scope.data).$save().then(function(newData){
@@ -172,6 +173,7 @@ angular.module("lightgalaApp")
 		      $location.path('/login/');
 		  }else if(err.status==409){
 		      //recaptcha failed
+		      //disable recaptcha
 		      //vcRecaptchaService.reload($scope.recaptcha.widgetId);
 		  }else{
 		      $alert({
