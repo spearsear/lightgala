@@ -1,6 +1,6 @@
-//var db_str = 'mongodb://lightuser:test@localhost:27017/holilight';
-var db_str = 'mongodb://lightuser:test@ds053320.mongolab.com:53320/holilight';
-var host_str = 'http://www.lightgala.com';
+var config = require("../config.js");
+var db_str = 'mongodb://'+config.DB_USER+':'+config.DB_PASS+'@'+config.DB_LINK+'/'+config.DB_NAME;
+var host_str = config.HOST_STR;
 var express = require('express');
 var mongoose = require('mongoose');
 var bcrypt = require('bcryptjs');
@@ -326,7 +326,7 @@ passport.use(new FacebookStrategy({
 	    var email_good = profile._json.hasOwnProperty('email');
 	    var user = new User({
 		email: email_good ? profile._json.email : profile.id + '@' + profile.provider + '.com',
-		password: 'he1101ight',
+		password: config.OAUTH_USER_PASS,
 		oauthID: profile.id,
 		name: profile.displayName,
 		fakemail: !email_good,
@@ -374,7 +374,7 @@ passport.use(new TwitterStrategy({
 	    var email_good = profile._json.hasOwnProperty('email');
 	    var user = new User({
 		email: email_good ? profile._json.email : profile.id + '@' + profile.provider + '.com',
-		password: 'he1101ight',
+		password: config.OAUTH_USER_PASS,
 		oauthID: profile.id,
 		name: profile.displayName,
 		username: profile.username,
@@ -421,7 +421,7 @@ passport.use(new AmazonStrategy({
 	    var email_good = profile._json.hasOwnProperty('email');
 	    var user = new User({
 		email: email_good ? profile._json.email : profile.id + '@' + profile.provider + '.com',
-		password: 'he1101ight',
+		password: config.OAUTH_USER_PASS,
 		oauthID: profile.id,
 		name: profile.displayName,
 		username: profile.username,
@@ -469,7 +469,7 @@ passport.use(new InstagramStrategy({
 	    var email_good = profile._json.hasOwnProperty('email');
 	    var user = new User({
 		email: email_good ? profile._json.email : profile.id + '@' + profile.provider + '.com',
-		password: 'he1101ight',
+		password: config.OAUTH_USER_PASS,
 		oauthID: profile.id,
 		name: profile.displayName,
 		username: profile._json.data.username,
@@ -513,7 +513,7 @@ router.get('/auth/instagram/callback',passport.authenticate('instagram',{failure
 	    var email_good = profile._json.hasOwnProperty('email');
 	    var user = new User({
 		email: email_good ? profile._json.email : profile.id + '@' + profile.provider + '.com',
-		password: 'he1101ight',
+		password: config.OAUTH_USER_PASS,
 		oauthID: profile.id,
 		name: profile.displayName,
 		username: profile.username,
@@ -549,7 +549,7 @@ passport.use(new YahooStrategy({
 	    var user = new User({
 		email: profile.emails[0].value,
 		email: email_good ? profile.emails[0].value : identifier+'@yahoo.com',
-		password: 'he1101ight',
+		password: config.OAUTH_USER_PASS,
 		identifier: identifier,   //google use OpenID, this identifier is not oauthID
 		name: profile.displayName,
 		fakemail: !email_good,
@@ -595,7 +595,7 @@ passport.use(new WindowsLiveStrategy({
 	    var email_good = profile._json.hasOwnProperty('emails');
 	    var user = new User({
 		email: email_good ? profile._json.emails.account : profile.id + '@' + profile.provider + '.com',
-		password: 'he1101ight',
+		password: config.OAUTH_USER_PASS,
 		oauthID: profile.id,
 		name: profile.displayName,
 		username: profile.username,
@@ -644,7 +644,7 @@ passport.use(new LinkedInStrategy({
 	    var email_good = profile._json.hasOwnProperty('emailAddress');
 	    var user = new User({
 		email: email_good ? profile._json.emailAddress : profile.id + '@' + profile.provider + '.com',
-		password: 'he1101ight',
+		password: config.OAUTH_USER_PASS,
 		oauthID: profile.id,
 		name: profile.displayName,
 		username: profile.username,
@@ -692,7 +692,7 @@ passport.use(new Auth0Strategy({
 	    var email_good = profile._json.hasOwnProperty('email');
 	    var user = new User({
 		email: email_good ? profile._json.email : profile.id + '@' + profile.provider + '.com',
-		password: 'he1101ight',
+		password: config.OAUTH_USER_PASS,
 		oauthID: profile.id,
 		name: profile.displayName,
 		fakemail: !email_good,
@@ -734,7 +734,7 @@ router.get('/auth/auth0/callback',passport.authenticate('auth0',{failureRedirect
 	    }else{
 		var user = new User({
 		    email: profile.emails[0].value,
-		    password: 'he1101ight',
+		    password: config.OAUTH_USER_PASS,
 		    identifier: identifier,   //google use OpenID, this identifier is not oauthID
 		    name: profile.displayName,
 		    provider: 'google'
@@ -773,7 +773,7 @@ passport.use(new GoogleStrategy({
 	    var email_good = profile.hasOwnProperty('email');
 	    var user = new User({
 		email: email_good ? profile.email : profile.id + '@' + profile.provider + '.com',
-		password: 'he1101ight',
+		password: config.OAUTH_USER_PASS,
 		oauthID: profile.id,
 		name: profile.displayName,
 		fakemail: !email_good,
@@ -896,15 +896,15 @@ agenda.define('send email after save',function(job,done){
 
 	var smtpTransport = nodemailer.createTransport({
 	    service: 'Gmail',
-	    auth: {user:'lightgala.com@gmail.com',pass:'notpassword'}
+	    auth: {user:config.EMAIL_ADMIN,pass:config.EMAIL_ADMIN_PASS}
 	});
 
 	var mailOptions = {
-	    from: 'LightGala <lightgala.com@gmail.com>',
+	    from: 'LightGala <'+config.EMAIL_ADMIN+'>',
 	    to: emails,
 	    subject: decor.decor.address.label + ' is lighting up',
 	    text: 'Hi, there,\n' + decor.decor.designer + ' has recently designed lighting at ' + decor.decor.address.label + '.\n' +
-		'Please go to lightgala.com and search for the address. \nEnjoy!',
+		'Please go to ' + host_str + ' and search for the address. \nEnjoy!',
 	    html: 'Hi, there,<br>' + decor.decor.designer + ' has recently designed lighting at <strong>' + decor.decor.address.label + '</strong>.\n<br>' +
 		'Please <a href="' + host_str + '/decor/'+ decor._id +'">click here</a> to enjoy the lighting\n<br>'+
 		'You can <a href="'+ host_str + '/decor/">design your own</a> also.<br> Enjoy!'
@@ -927,20 +927,20 @@ agenda.define('send email after save',function(job,done){
 
 agenda.define('invite pro to design',function(job,done){
     Decor.findOne({_id:job.attrs.data}).exec(function(err,decor){
-	var emails_pro = ['lightgala.com@gmail.com'];
+	var emails_pro = [config.EMAIL_ADMIN];
 	var emails = emails_pro.join(',');
 
 	var smtpTransport = nodemailer.createTransport({
 	    service: 'Gmail',
-	    auth: {user:'spearsear@gmail.com',pass:'notpassword'}
+	    auth: {user:config.EMAIL_ADMIN,pass:config.EMAIL_ADMIN_PASS}
 	});
 
 	var mailOptions = {
-	    from: 'Stephen Spearsberg <spearsear@gmail.com>',
+	    from: 'LightGala <'+config.EMAIL_ADMIN+'>',
 	    to: emails,
 	    subject: decor.decor.address.label + ' is looking for lighting design',
 	    text: '' + decor.decor.designer + ' at ' + decor.decor.address.label + ' is interested in having a professional to design lighting for the holiday.\n' +
-		'Please go to lightgala.com and search for the address. \nEnjoy!',
+		'Please go to ' + host_str+ ' and search for the address. \nEnjoy!',
 	    html: '' + decor.decor.designer + ' at <strong>' + decor.decor.address.label + '</strong> is interested in having a professional to design lighting for the holiday.\n<br>' +
 		'His/her own design can be seen <a href="'+ host_str + '/decor/' + decor._id + '">here</a>, ' +
 		'Please <a href="' + host_str + '/decor/template/'+ decor._id +'">click here</a> to design the lighting for ' + decor.decor.designer + '.\n<br>Enjoy!'
