@@ -248,10 +248,12 @@ angular.module("lightgalaApp")
 		      var light = lightService.getLight(d.light_type);
 		      var stops = d.shadow.stops;
 		      var bulb_color = ele.attr("bulbcolor");
-		      var color_def = light.getColorDef(bulb_color);
-		      if(color_def){
-			  stops[0].color = utilService.hslStringToRgbString(color_def.stopcolor1);
+		      if(light.getColorDef){
+			  var color_def = light.getColorDef(bulb_color);
+			  if(color_def){
+			      stops[0].color = utilService.hslStringToRgbString(color_def.stopcolor1);
 			      stops[stops.length-1].color = utilService.hslStringToRgbString(color_def.stopcolor2);
+			  }
 		      }
 		  }
 		  ele.call(light.turnon).call(light.flash).call(light.glow).call(light.castshadow).call(light.emitray);
@@ -273,10 +275,12 @@ angular.module("lightgalaApp")
 			  var light = lightService.getLight(d.light_type);
 			  var stops = d.shadow.stops;
 			  var bulb_color = ele.attr("bulbcolor");
-			  var color_def = light.getColorDef(bulb_color);
-			  if(color_def){
-			      stops[0].color = utilService.hslStringToRgbString(color_def.stopcolor1);
-			      stops[stops.length-1].color = utilService.hslStringToRgbString(color_def.stopcolor2);
+			  if(light.getColorDef){
+			      var color_def = light.getColorDef(bulb_color);
+			      if(color_def){
+				  stops[0].color = utilService.hslStringToRgbString(color_def.stopcolor1);
+				  stops[stops.length-1].color = utilService.hslStringToRgbString(color_def.stopcolor2);
+			      }
 			  }
 		      }
 		      ele.call(light.turnon).call(light.flash).call(light.glow).call(light.castshadow).call(light.emitray);
