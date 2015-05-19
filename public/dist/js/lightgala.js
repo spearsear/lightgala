@@ -245,14 +245,9 @@ angular.module("lightgalaApp")
 	      //update
 	      //decorsListService.update({_id: $scope.decor_id}, $scope.data);
 
-	      /*$scope.data.recaptcha = {
-		  challenge: '',
-		  response: $scope.recaptcha.response
-	      }*/
-
 	      var data_n_captcha = {
 		  data: $scope.data,
-		  recaptcha_response: vcRecaptchaService.getResponse()
+		  recaptcha_response: 0 //vcRecaptchaService.getResponse()
 	      }
 
 	      //decorsListService.update({_id: $scope.decor_id}, $scope.data).$promise.then(function(updatedDecor){
@@ -282,7 +277,7 @@ angular.module("lightgalaApp")
 		      });
 		  }else if(err.status==409){
 		      //recaptcha failed
-		      vcRecaptchaService.reload($scope.recaptcha.widgetId);
+		      //vcRecaptchaService.reload($scope.recaptcha.widgetId);
 		  }else{
 		      $alert({
 			  title: 'Error occurred while saving!',
@@ -306,11 +301,13 @@ angular.module("lightgalaApp")
 	      $scope.data.decor.last_mod_time = new Date();
 	      var data_n_captcha = {
 		  data: $scope.data,
-		  recaptcha_response: vcRecaptchaService.getResponse()
+		  //disable recaptcha
+		  recaptcha_response: 0 //vcRecaptchaService.getResponse()
 	      }
 	      //new decorsListService($scope.data).$save().then(function(newData){
 	      new decorsListService(data_n_captcha).$save().then(function(newData){
 		  $scope.data = newData;
+		  $scope.decor_id = newData._id;
 		  $scope.setDirty(false);
 		  $scope.saveDialog.hide();
 		  decorDataService.resetData();
@@ -322,7 +319,8 @@ angular.module("lightgalaApp")
 		      $location.path('/login/');
 		  }else if(err.status==409){
 		      //recaptcha failed
-		      vcRecaptchaService.reload($scope.recaptcha.widgetId);
+		      //disable recaptcha
+		      //vcRecaptchaService.reload($scope.recaptcha.widgetId);
 		  }else{
 		      $alert({
 			  title: 'Error occurred while saving!',
@@ -370,10 +368,12 @@ angular.module("lightgalaApp")
 	      var ele = d3.select("g[decor_line_id='"+$scope.current.decor.line_id+"'][decor_line_element_id='"+$scope.current.decor.line_element_id+"']");
 	      var stops = $scope.element_config.rgConfigured.stops;
 	      var light = lightService.getLight(ele.data()[0].light_type);
-	      var color_def = light.getColorDef(light.color);
-	      if(color_def){
-		  stops[0].color = utilService.hslStringToRgbString(color_def.stopcolor1);
-		  stops[stops.length-1].color = utilService.hslStringToRgbString(color_def.stopcolor2);
+	      if(light.getColorDef){
+		  var color_def = light.getColorDef(light.color);
+		  if(color_def){
+		      stops[0].color = utilService.hslStringToRgbString(color_def.stopcolor1);
+		      stops[stops.length-1].color = utilService.hslStringToRgbString(color_def.stopcolor2);
+		  }
 	      }
 	  }
       }
@@ -394,10 +394,12 @@ angular.module("lightgalaApp")
 		      var light = lightService.getLight(d.light_type);
 		      var stops = d.shadow.stops;
 		      var bulb_color = ele.attr("bulbcolor");
-		      var color_def = light.getColorDef(bulb_color);
-		      if(color_def){
-			  stops[0].color = utilService.hslStringToRgbString(color_def.stopcolor1);
+		      if(light.getColorDef){
+			  var color_def = light.getColorDef(bulb_color);
+			  if(color_def){
+			      stops[0].color = utilService.hslStringToRgbString(color_def.stopcolor1);
 			      stops[stops.length-1].color = utilService.hslStringToRgbString(color_def.stopcolor2);
+			  }
 		      }
 		  }
 		  ele.call(light.turnon).call(light.flash).call(light.glow).call(light.castshadow).call(light.emitray);
@@ -419,10 +421,12 @@ angular.module("lightgalaApp")
 			  var light = lightService.getLight(d.light_type);
 			  var stops = d.shadow.stops;
 			  var bulb_color = ele.attr("bulbcolor");
-			  var color_def = light.getColorDef(bulb_color);
-			  if(color_def){
-			      stops[0].color = utilService.hslStringToRgbString(color_def.stopcolor1);
-			      stops[stops.length-1].color = utilService.hslStringToRgbString(color_def.stopcolor2);
+			  if(light.getColorDef){
+			      var color_def = light.getColorDef(bulb_color);
+			      if(color_def){
+				  stops[0].color = utilService.hslStringToRgbString(color_def.stopcolor1);
+				  stops[stops.length-1].color = utilService.hslStringToRgbString(color_def.stopcolor2);
+			      }
 			  }
 		      }
 		      ele.call(light.turnon).call(light.flash).call(light.glow).call(light.castshadow).call(light.emitray);
@@ -1218,7 +1222,7 @@ angular.module('d3',[])
 .factory('d3Service',['$document','$q','$rootScope',function($document,$q,$rootScope){
   var ds = [$q.defer()];
   //var d3srcs = ['http://d3js.org/d3.v3.min.js']
-  var d3srcs = ['/js/lib/d3.js']
+  var d3srcs = ['/bower_components/d3/d3.js']
   var onscriptloadfuncs = [];
   //create the script tags for d3 libraries
   var s = $document[0].getElementsByTagName('head')[0];
@@ -2403,7 +2407,7 @@ angular.module("lightgalaApp")
  *   this file define lightService which provide various kinds of light
  */
 angular.module("lightgalaApp")
-  .factory("lightService",['lightSvgsService','lightAnimService','utilService','$window',function(lightSvgsService,lightAnimService,utilService,$window){
+  .factory("lightService",['lightSvgsService','utilService','$window',function(lightSvgsService,utilService,$window){
     var colorManager = {
 	getColors: function(defs){
 	    //given defs (provided by controller scope), retrieve all colors supported
@@ -2964,7 +2968,7 @@ angular.module("lightgalaApp")
  *   this file define lightAnimService which provide various kinds of light animation pattern for each decor_line
  */
 angular.module("lightgalaApp")
-  .factory("lightAnimService",['$timeout','utilService',function($timeout,utilService){
+  .factory("lightAnimService",['$timeout','lightService','utilService',function($timeout,lightService,utilService){
     var basicAnim = {
 	timers: [],
 	init_config: function(){
@@ -3225,7 +3229,8 @@ angular.module("lightgalaApp")
 	    //start animation defined in animations
 	    var self=this;
 	    var cycle_seconds=_.max(animations,function(anim){return anim.start_second}).start_second + 30;
-	    self.stop(function(){});
+	    //do not stop anim here otherwise timers of other decor_line will be cleared
+	    //self.stop(function(){});
 	    for(var i=0;i<animations.length;i++){
 		self.timers.push($timeout((function(){
 		    var j = i;
@@ -5692,10 +5697,10 @@ angular.module("lightgalaApp")
 	              scope.$apply();
 		  }
 		  //start animation of each decor_line by setting active fired at start_seond by timeout service
+		  var anim = lightAnimService.getAnim();
 		  _.forEach(scope.data.decor.decor_lines,function(dl){
 		      //remove all inactive anims dom element
 		      scope.decor_line_anim_enter_func(dl.decor_line_id);
-		      var anim = lightAnimService.getAnim();
 		      //anim.start(scope.data.animations,function(start_second){
 		      anim.start(_.filter(scope.data.animations,function(a){return a.decor_line_id == dl.decor_line_id}),function(start_second){
 			  _.forEach(scope.data.animations.sort(utilService.dynamicSortMultiple("start_second","set","segment")),function(a){
@@ -6201,7 +6206,7 @@ angular.module("lightgalaApp")
 		scope.svg.select("g.decor g.decor_lines g.decor_line[decor_line_id='"+decor_line_id+"']")
 		    .selectAll("g.decor_line_element:not(.unlightable)").each(function(){
 			var light = lightService.getLight(d3.select(this).data()[0].light_type);
-			d3.select(this).call(light.unemitray).call(light.emitray);
+			d3.select(this).call(light.uncastshadow).call(light.castshadow).call(light.unemitray).call(light.emitray);
 		    });
 	    }
 
@@ -6235,7 +6240,7 @@ angular.module("lightgalaApp")
 		scope.svg.select("g.decor g.decor_lines g.decor_line[decor_line_id='"+decor_line_id+"']")
 		    .selectAll("g.decor_line_element:not(.unlightable)").each(function(){
 			var light = lightService.getLight(d3.select(this).data()[0].light_type);
-			d3.select(this).call(light.unemitray).call(light.emitray);
+			d3.select(this).call(light.uncastshadow).call(light.castshadow).call(light.unemitray).call(light.emitray);
 		    });
 	    }
 
@@ -6298,7 +6303,8 @@ angular.module("lightgalaApp")
 		     d3.select(this).attr("transform",function(d){
 		     var outline_ele = d3.select(this).select(".outline").node(),
 		         bbox = outline_ele.getBBox(),
-		         scaleFactor = scope.rScale(d.scale_factor*3);
+		         //scaleFactor = scope.rScale(d.scale_factor*3);
+			 scaleFactor = scope.rScale(d.scale_factor);
 		     return "translate("+scope.xScale(d.x-scope.xScale_reverse(bbox.x+bbox.width/2)-scope.xScale_reverse(bbox.x+bbox.width/2)*(scaleFactor-1))+","+scope.yScale(d.y-scope.yScale_reverse(bbox.y+bbox.height/2)-scope.yScale_reverse(bbox.y+bbox.height/2)*(scaleFactor-1))+") scale("+scaleFactor+") rotate("+scope.element_config.rotate()+","+(bbox.x+bbox.width/2)+","+(bbox.y+bbox.height/2)+")";
 		     });		       
 		   })
