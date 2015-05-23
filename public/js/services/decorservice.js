@@ -64,7 +64,8 @@ angular.module("lightgalaApp")
 		    group: group,     //after dblclick, multiple groups along tracelines could be generated (separated by gap), forming a set
 	            tag: tag, 		    //tag: 'interpolated','original'
 		    scale_factor_shadow: ele_cfg.scale_factor_shadow,
-		    shadow: angular.copy(ele_cfg.rgConfigured)
+		    //shadow could be undefined,{},or {...}
+		    shadow: ele_cfg.rgConfigured.dirty? angular.copy(ele_cfg.rgConfigured) : {}
 	    };
 	},
 	convertElementToConfig: function(ele){
@@ -365,6 +366,7 @@ angular.module("lightgalaApp")
 	    if (i == undefined) {
 		if(!('max_lines' in this.elementConfig) || num_lines_of_type<this.elementConfig.max_lines){
 		    //start a new decor_line
+		    scope.resetShadow();
 		    i = scope.data.decor.decor_lines.length + 1;
 	            var unique_line_id = utilService.uniqueId(i);
 		    scope.data.decor.decor_lines.push({
