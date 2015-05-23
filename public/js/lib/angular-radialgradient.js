@@ -11,7 +11,7 @@ angular.module("radialgradient.module",["colorpicker.module"])
 				rgConfigured: '=ngModel',
 				runAfter: '&runAfter'
 			},
-			//required ngModel controller is supplied as an argiment
+			//required ngModel controller is supplied as an argument
 			link: function(scope, element, attrs, ngModel){
 				//controller code: rgdata should've be in controller
 				scope.margin = {top: 10, right: 10, bottom: 10, left: 10};
@@ -20,7 +20,7 @@ angular.module("radialgradient.module",["colorpicker.module"])
 					height: 256 + scope.margin.top + scope.margin.bottom,
 					center: {x: 0.5, y:0.5},
 					focal: {x: 0.5, y: 0.5},
-					radius: 0.5,
+					radius: 0.1,
 					transform: {
 						rotate: 0,
 						translate: {
@@ -43,6 +43,27 @@ angular.module("radialgradient.module",["colorpicker.module"])
 				scope.num_colors = 11;  //number of control colors to change stop color
 				scope.num_temps = 4;    //keep 4 temp rgdata
 				scope.rgdata_temps = [];
+			        scope.setDirty = function(){
+				    scope.rgdata.dirty = true;
+				}
+			        scope.clearDirty = function(){
+				    //ngModel dirty change from true to false would trigger this func to set model value to default rgdata
+				    //user may want to keep the current rgdata so no need to do this
+				    if(false){
+             				ngModel.$setViewValue(angular.copy(scope.rgdata_default));
+             				ngModel.$render();
+				    }
+				}
+			        scope.isDirty = function(){
+				    return scope.rgdata.dirty;
+				}
+
+				scope.$watch("rgdata.dirty",function(newVal,oldVal){
+				    //clearDirty if dirty change from true to false
+				    if(!newVal && oldVal){
+					scope.clearDirty();
+				    }
+				},true);
 
 				scope.computeColorArray = function(){
 					if(typeof d3 == "undefined"){
@@ -101,6 +122,7 @@ angular.module("radialgradient.module",["colorpicker.module"])
 					if(!scope.colors_changed){
 						return false;
 					}
+				        scope.setDirty();
 					scope.colors_changed = false;
 					for(var i=0;i<newVal.length;i++){
 						if(newVal[i].color!=oldVal[i].color){
@@ -196,7 +218,7 @@ angular.module("radialgradient.module",["colorpicker.module"])
 					+ "    <div ng-repeat='color in rgdata.colors' class='stopcolor {{stopColorClass(color)}}' colorpicker='rgb' colorpicker-close-on-select colorpicker-position='bottom' ng-model='rgdata.colors[$index].color' style='{{ computeStopColorStyle($index) }}'></div>"
 					+ "		<div class='rgchooser-Reset' ng-click='resetRgChooser()'>{{ computeRgdataIndexInTemps() }}</div>"
 					+ "  </div>"
-					+ "  <div class='stopcolor-ToggleStop rgchooser-Ctrl'>"
+					+ "  <div class='stopcolor-ToggleStop rgchooser-Ctrl' ng-if='isDirty()'>"
 					+ "    <div ng-repeat='color in rgdata.colors' class='stopcolor {{stopColorClass(color)}}' ng-click=' toggleStopColorOriginal($index) ' style='{{ computeStopColorToggleStyle($index) }}'></div>"
 					+ "  </div>"
 					+ "</div>"
@@ -339,6 +361,7 @@ angular.module("radialgradient.module",["colorpicker.module"])
 				}
 
 				function dragged(d) {
+				        scope.setDirty();
   					d3.select(this)
   						.attr("cx", function(){
   							var x_new;
