@@ -76,7 +76,8 @@ angular.module("lightgalaApp")
 	  //update shadow stops for the color
 	  var d = append_to.data();
 	  if(d.length>0){
-	    if(d[0].shadow){
+	    if(angular.isDefined(d[0].shadow) && Object.keys(d[0].shadow).length>0){
+	      //shadow is not {}
 	      var stops = d[0].shadow.stops;
 	      var color_def = this.getColorDef(color);
 	      if(color_def){
@@ -358,7 +359,7 @@ angular.module("lightgalaApp")
 	},
 	castshadow: function(append_to){
 	    var shadow = append_to.data()[0].shadow;
-	    var rgdata = angular.isUndefined(shadow)?[]:[shadow];
+	    var rgdata = (angular.isDefined(shadow) && Object.keys(shadow).length>0)?[shadow]:[];
 	    var scale_factor_shadow = append_to.data()[0].scale_factor_shadow? append_to.data()[0].scale_factor_shadow: 1;
 	    if(rgdata.length==0) return;
 	    append_to.selectAll(".base").each(function(){
