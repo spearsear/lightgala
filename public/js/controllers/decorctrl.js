@@ -216,6 +216,10 @@ angular.module("lightgalaApp")
 
       $scope.element_config = toolService.getTool("").current_config.install_supported_defs($scope.data.defs);
 
+      $scope.resetShadow = function(){
+	  $scope.element_config.rgConfigured.dirty = false;
+      };
+
       $scope.initShadowStopColors = function(){
 	  //initialize shadow stop colors to be the stopcolor1 and stopcolor2 of current selected color
 	  if($scope.current.decor.line_element_id){
@@ -233,7 +237,7 @@ angular.module("lightgalaApp")
       }
 
       $scope.shadowViewFunc = function(){
-	  //attach confifigured shadow data to current decor_line_element
+	  //attach configured shadow data to current decor_line_element
 	  //console.log('shadow changed');
 	  if($scope.current.decor.line_element_id){
 	      //set shadow for this line element only if element_id is not null
@@ -245,14 +249,16 @@ angular.module("lightgalaApp")
 	      if(angular.isDefined(ele)){
 		  if(ele.data.length>0){
 		      var d = ele.data()[0];
-		      var light = lightService.getLight(d.light_type);
-		      var stops = d.shadow.stops;
-		      var bulb_color = ele.attr("bulbcolor");
-		      if(light.getColorDef){
-			  var color_def = light.getColorDef(bulb_color);
-			  if(color_def){
-			      stops[0].color = utilService.hslStringToRgbString(color_def.stopcolor1);
-			      stops[stops.length-1].color = utilService.hslStringToRgbString(color_def.stopcolor2);
+		      if(d){
+			  var light = lightService.getLight(d.light_type);
+			  var stops = d.shadow.stops;
+			  var bulb_color = ele.attr("bulbcolor");
+			  if(light.getColorDef){
+			      var color_def = light.getColorDef(bulb_color);
+			      if(color_def){
+				  stops[0].color = utilService.hslStringToRgbString(color_def.stopcolor1);
+				  stops[stops.length-1].color = utilService.hslStringToRgbString(color_def.stopcolor2);
+			      }
 			  }
 		      }
 		  }
