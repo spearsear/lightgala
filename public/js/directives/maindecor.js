@@ -904,7 +904,7 @@ angular.module("lightgalaApp")
 		     var outline_ele = d3.select(this).select(".outline").node(),
 		         bbox = outline_ele.getBBox(),
 		         //scaleFactor = scope.rScale(d.scale_factor*3);
-			 scaleFactor = scope.rScale(d.scale_factor);
+			 scaleFactor = scope.rScale(d.scale_factor*1.2);
 		     return "translate("+scope.xScale(d.x-scope.xScale_reverse(bbox.x+bbox.width/2)-scope.xScale_reverse(bbox.x+bbox.width/2)*(scaleFactor-1))+","+scope.yScale(d.y-scope.yScale_reverse(bbox.y+bbox.height/2)-scope.yScale_reverse(bbox.y+bbox.height/2)*(scaleFactor-1))+") scale("+scaleFactor+") rotate("+scope.element_config.rotate()+","+(bbox.x+bbox.width/2)+","+(bbox.y+bbox.height/2)+")";
 		     });		       
 		   })
