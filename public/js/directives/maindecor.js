@@ -1,5 +1,5 @@
 angular.module("lightgalaApp")
-    .directive('mainDecor',['$q','$window','$http','$routeParams','$location','$alert','$modal','$rootScope','d3Service','decorsListService','decorService','decorDataService','lightSvgsService','lightService','lightAnimService','toolService','utilService',function($q,$window,$http,$routeParams,$location,$alert,$modal,$rootScope,d3Service,decorsListService,decorService,decorDataService,lightSvgsService,lightService,lightAnimService,toolService,utilService){
+    .directive('mainDecor',['$q','$timeout','$window','$http','$routeParams','$location','$alert','$modal','$rootScope','d3Service','decorsListService','decorService','decorDataService','lightSvgsService','lightService','lightAnimService','toolService','utilService','usSpinnerService',function($q,$timeout,$window,$http,$routeParams,$location,$alert,$modal,$rootScope,d3Service,decorsListService,decorService,decorDataService,lightSvgsService,lightService,lightAnimService,toolService,utilService,usSpinnerService){
 	return function(scope,ele,attrs){
 	  scope.mode = attrs['mode']; //or view from attrs
 	  //text shown in svg before backgroundurl is set
@@ -255,23 +255,31 @@ angular.module("lightgalaApp")
 	      }
 	      }//end if night
 	      if(oldVal.start != newVal.start){
+		  scope.animate_defer = $q.defer();
 		  var starttool = _.find(scope.data.tools,function(tool){return tool.name=='animatestarttool'});
 		  if(scope.current.animation.start){
 		      starttool.icon_toggle = true;
 		      if(scope.svg){
-			  scope.animateStart(true);
+			  //asynch start animation
+			  $timeout(function(){scope.animateStart(true)},0);
 			  scope.selectTool("musicTool");
 		      }
 		  }else{
 		      starttool.icon_toggle = false;
 		      if(scope.svg){
-			  scope.animateStart(false);
+			  $timeout(function(){scope.animateStart(false)},0);
 			  //pause music
 			  if(scope.current.music.playing){
 			      scope.selectTool("musicTool");
 			  }
 		      }
 		  }
+		  scope.animate_defer.promise.then(function(str_success){
+		      console.log(str_success);
+		      usSpinnerService.stop('spinner-1');
+		  },function(str_error){
+		      console.log(str_error);
+		  });
 	      }
 	  },true);
 
@@ -331,11 +339,13 @@ angular.module("lightgalaApp")
 			  //write animConfig from animations to radialgradient of decor_line dom, this is the bottleneck of animation
 			  //to update active status. TEMPORARILY DISABLED FOR SLOW PERFORMANCE
 			  scope.decor_line_anim_update_func(dl.decor_line_id);
+			  scope.animate_defer.resolve("animate started");
 		      },function(){},3);//10 numcycles
 		  });
 	      }else{
 		  var anim = lightAnimService.getAnim();
 		  anim.stop(function(){});
+		  scope.animate_defer.resolve("animate stopped");
 	      }
 	      animateAll(animate);
 	  }
