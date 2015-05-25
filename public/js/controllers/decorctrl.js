@@ -54,7 +54,7 @@ angular.module("lightgalaApp")
 	    }
 	}
     })
-    .controller('decorCtrl',['$scope','$http','$alert','$location','$rootScope','$routeParams','baseUrl','decorsListService','subscriptionService','decorService','decorDataService','toolService','lightService','utilService','vcRecaptchaService',function($scope,$http,$alert,$location,$rootScope,$routeParams,baseUrl,decorsListService,subscriptionService,decorService,decorDataService,toolService,lightService,utilService,vcRecaptchaService){
+    .controller('decorCtrl',['$scope','$q','$timeout','$http','$alert','$location','$rootScope','$routeParams','baseUrl','decorsListService','subscriptionService','decorService','decorDataService','toolService','lightService','utilService','vcRecaptchaService','usSpinnerService',function($scope,$q,$timeout,$http,$alert,$location,$rootScope,$routeParams,baseUrl,decorsListService,subscriptionService,decorService,decorDataService,toolService,lightService,utilService,vcRecaptchaService,usSpinnerService){
       $scope.name = 'decorCtrl scope';
       //initialize data with data in decordataservice(cached data)
       $scope.data = decorDataService.getData();
@@ -78,6 +78,7 @@ angular.module("lightgalaApp")
           }
       }
       $scope.saveDecor = function(){
+	  //save asyncly
 	  if(!$rootScope.currentUser){
 	      $scope.saveDialog.hide();
 	      $scope.keepDataInCache = true;
@@ -94,6 +95,7 @@ angular.module("lightgalaApp")
 	      $scope.keepDataInCache = false;
 	  };
 	  if($scope.decor_id){
+	      usSpinnerService.spin("spinner-1");
 	      $scope.data.decor.user_id = $rootScope.currentUser._id;
 	      $scope.data.decor.last_mod_time = new Date();
 	      //update
@@ -110,10 +112,12 @@ angular.module("lightgalaApp")
 		  $scope.setDirty(false);
 		  $scope.saveDialog.$promise.then(function(){
 		      decorDataService.resetData();
-		      $scope.saveDialog.hide();		      
+		      $scope.saveDialog.hide();	
+		      usSpinnerService.stop("spinner-1");	      
 		  })
 	      },function(err){
 		  //error occured
+		  usSpinnerService.stop("spinner-1");
 		  if(err.status==401){
 		      //Unauthorized
 		      $scope.saveDialog.hide();
@@ -150,6 +154,7 @@ angular.module("lightgalaApp")
 		  });*/
 	  }else{
 	      //save a new decor
+	      usSpinnerService.spin("spinner-1");
 	      $scope.data.decor.user_id = $rootScope.currentUser._id;
 	      $scope.data.decor.create_time = new Date();
 	      $scope.data.decor.last_mod_time = new Date();
@@ -165,7 +170,9 @@ angular.module("lightgalaApp")
 		  $scope.setDirty(false);
 		  $scope.saveDialog.hide();
 		  decorDataService.resetData();
+		  usSpinnerService.stop("spinner-1");
 	      },function(err){
+		  usSpinnerService.stop("spinner-1");
 		  //error occured
 		  if(err.status==401){
 		      //Unauthorized
@@ -197,8 +204,10 @@ angular.module("lightgalaApp")
 
       $scope.deleteDecor = function(){
 	  if($scope.decor_id){
+	      usSpinnerService.spin("spinner-1");
 	      $scope.data.$delete(function(){
 		  //success callback
+		  usSpinnerService.stop("spinner-1");
 		  $alert({
 		      title: 'Decor removed!',
 		      content: 'Successfully removed decor from cloud.',
