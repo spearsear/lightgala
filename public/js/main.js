@@ -7,15 +7,19 @@ angular.module("lightgalaApp",["d3",
 			       "uiGmapgoogle-maps",
 			       "vcRecaptcha",
 			       "colorpicker.module",
-			       "radialgradient.module"
+			       "radialgradient.module",
+			       "angularSpinner"
 			      ])
-    .constant('baseUrl','http://lightgala.com:3000/')
+    .constant('baseUrl','http://lightgala.com/')
     .config(['uiGmapGoogleMapApiProvider',function(uiGmapGoogleMapApiProvider) {
 	uiGmapGoogleMapApiProvider.configure({
 	    //key:'ABQIAAAAohHzkd1YRQBb9RMm3fUK2BSRwUSrndu2uRr20ZQGKie2aCUX9RSLCwrqzklKSJUffbARXImLW_96bw',
             v: '3.17',
             libraries: 'weather,geometry,visualization'
 	});
+    }])
+    .config(['usSpinnerConfigProvider', function (usSpinnerConfigProvider) {
+	usSpinnerConfigProvider.setDefaults({color: 'white'});
     }])
     .config(['$locationProvider','$routeProvider','$httpProvider',function($locationProvider,$routeProvider,$httpProvider){
 	$locationProvider.html5Mode(true);
