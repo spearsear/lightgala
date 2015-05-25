@@ -4,7 +4,7 @@
  *   to config current_config which is referenced by scope.element_config
  */
 angular.module("lightgalaApp")
-  .factory("toolService",['$location','decorService','decorDataService','lightService','lightAnimService','utilService','$modal','$aside','$alert','$popover','$injector',function($location,decorService,decorDataService,lightService,lightAnimService,utilService,$modal,$aside,$alert,$popover,$injector){      
+  .factory("toolService",['$location','decorService','decorDataService','lightService','lightAnimService','utilService','usSpinnerService','$modal','$aside','$alert','$popover','$injector','$q','$timeout',function($location,decorService,decorDataService,lightService,lightAnimService,utilService,usSpinnerService,$modal,$aside,$alert,$popover,$injector,$q,$timeout){      
     //base tool object created thru object literal
     var basicTool = {
 	//basicTool config is the default config
@@ -520,6 +520,7 @@ angular.module("lightgalaApp")
 	    return this;
 	}},
 	afterinvoke: {value: function(scope){
+	    usSpinnerService.spin('spinner-1');
 	    scope.current.animation.start = scope.current.animation.start? false : true;
 	    if(!scope.$$phase){
 		scope.$apply();
@@ -1025,6 +1026,8 @@ angular.module("lightgalaApp")
 	    return this;
 	}},
 	afterinvoke: {value: function(scope){
+	    //toggleAudio as a promise
+	    var defer = $q.defer();
 	    var dur = 0;
 
 	    function toggleAudio(){
@@ -1064,6 +1067,7 @@ angular.module("lightgalaApp")
 			    mySound.load({
 				onload: function() {
 				    dur = this.duration; //seconds
+				    defer.resolve('music loaded');
 				},
 			    });
 			    scope.current.music.progress_timer = 0;
@@ -1092,6 +1096,7 @@ angular.module("lightgalaApp")
 			},
 			ontimeout: function() {
 			    // Uh-oh. No HTML5 support, SWF missing, Flash blocked or other issue
+			    defer.reject("can not play sound");
 			    alert("Can not play sound!");
 			}
 		    });
@@ -1127,7 +1132,15 @@ angular.module("lightgalaApp")
 		});				    
 	    }
 
-	    toggleAudio();
+	    defer.promise.then(function(str_success){
+		updateProgress(0,this.duration);
+		console.log(str_success);
+	    },function(str_error){
+		console.log(str_error);
+	    });
+
+	    $timeout(toggleAudio,0);
+	    return this;
 	}}
     });
 
@@ -1352,6 +1365,8 @@ angular.module("lightgalaApp")
 	    return this;
 	}},
 	afterinvoke: {value: function(scope){
+	    usSpinnerService.spin('spinner-1');
+	    scope.snow_defer = $q.defer();
 	    var snowfunc = function($compile){
 		//need to inject $compile service
 		/*scope.svg.select("g.decor g.foreground").selectAll("g.weather").remove();
@@ -1360,10 +1375,17 @@ angular.module("lightgalaApp")
 		$("div.decormain div.weather").remove();
 		$("div.decormain").append("<div class='weather' snow></div>");
 		$compile($("div.weather"))(scope);
+		scope.snow_defer.resolve("snow started");
 	    };
 	    //avoid minimization replace $compile paramter with b
 	    snowfunc.$inject = ['$compile'];
 	    $injector.invoke(snowfunc,null);
+	    scope.snow_defer.promise.then(function(str_success){
+		console.log(str_success);
+		usSpinnerService.stop('spinner-1');
+	    },function(str_error){
+		console.log(str_error);
+	    });
 	}}
     });
 
@@ -1375,6 +1397,8 @@ angular.module("lightgalaApp")
 	    return this;
 	}},
 	afterinvoke: {value: function(scope){
+	    usSpinnerService.spin('spinner-1');
+	    scope.rain_defer = $q.defer();
 	    var rainfunc = function($compile){
 		//need to inject $compile service
 		/*scope.svg.select("g.decor g.foreground").selectAll("g.weather").remove();
@@ -1384,10 +1408,17 @@ angular.module("lightgalaApp")
 		$("div.decormain div.weather").remove();
 		$("div.decormain").append("<div class='weather' rain></div>");
 		$compile($("div.weather"))(scope);
+		scope.rain_defer.resolve("rain started");
 	    };
 	    //avoid minimization replace $compile paramter with b
 	    rainfunc.$inject = ['$compile'];
 	    $injector.invoke(rainfunc,null);
+	    scope.rain_defer.promise.then(function(str_success){
+		console.log(str_success);
+		usSpinnerService.stop('spinner-1');
+	    },function(str_error){
+		console.log(str_error);
+	    });
 	}}
     });
 
