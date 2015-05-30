@@ -295,8 +295,8 @@ angular.module("lightgalaApp")
 	    return append_to;
 	},  //end unflash function
 	glow: function(append_to){
-	    //append_to.attr("filter","url(#lightglow)");
-	    append_to.attr("filter","url("+$window.location+"#lightglow)");
+	    //deprecated
+	    //append_to.attr("filter","url("+$window.location+"#lightglow)");
 	    return append_to;
 	},  //end glow function
 	unglow: function(append_to){
