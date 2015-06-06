@@ -134,6 +134,7 @@ angular.module("lightgalaApp",["d3",
 	return requestInterceptor;
     }])
     .run(function(){
+	FastClick.attach(document.body);
     })
     /*.run(function($rootScope,$location){
 	$rootScope.$on('$routeChangeStart',function(ev,next,curr){
