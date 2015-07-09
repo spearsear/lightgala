@@ -104,7 +104,8 @@
 	  <div ng-repeat="decor in decors | filter: excludeCurrentViewedDecor" class="row hidden-xs decor-related col-md-12">
 	    <div class="col-md-4 bottom-buffer left-buffer">
 	      <a href="/decor/{{decor._id}}">
-		<img ng-src="{{decor.decor.backgroundurl}}" alt="" class="img-responsive">
+		<!--<img ng-src="{{decor.decor.backgroundurl}}" alt="" class="img-responsive">-->
+		<img ng-src={{"/img/backgrounds/"+decor._id+".jpg?dim=200x140"}} alt="" class="img-responsive"/>
 	      </a>
 	    </div>
 	    <div class="col-md-7 nopadding decors-list-desc">
