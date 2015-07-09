@@ -44,7 +44,8 @@
 	      <slide ng-repeat="group in feature.groupedDecors track by $index">
 		<div class="col-xs-3 col-sm-3 col-md-3 decor-padding top-buffer" ng-repeat="decor in group">
 		  <a href="/decor/{{decor._id}}" class="decor_img">
-		    <img ng-src="{{decor.decor.backgroundurl}}" width="100%">      
+		    <!--<img ng-src="{{decor.decor.backgroundurl}}" width="100%">-->
+		    <img ng-src={{"/img/backgrounds/"+decor._id+".jpg?dim=200x140"}} width="100%"/>
 		  </a>
 		  <div class="">
 		    <div><a href="/decor/{{decor._id}}">{{decor.decor.title}}</a></div>
@@ -69,7 +70,8 @@
 	    <div><hr><h5><strong> Lights here, lights there, lights everywhere!</strong><h5></div>
 	    <div class="col-xs-3 col-sm3 col-md-3 decor-padding top-buffer" ng-repeat="decor in decors">
 	      <a href="/decor/{{decor._id}}" class="decor_img">
-		<img ng-src="{{decor.decor.backgroundurl}}" width="100%"/>
+		<!--<img ng-src="{{decor.decor.backgroundurl}}" width="100%"/>-->
+		<img ng-src={{"/img/backgrounds/"+decor._id+".jpg?dim=200x140"}} width="100%"/>
 	      </a>
 	      <div class="">
 		<div><a href="/decor/{{decor._id}}">{{decor.decor.title}}</a></div>
