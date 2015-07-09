@@ -24,7 +24,18 @@ var agenda = require("agenda")({db: {address: db_str}});
 var sugar = require("sugar");
 var nodemailer = require("nodemailer")
 var router = express.Router();
+var fs = require('fs');
 require('./mongoose-paginate.js');
+
+function base64_decode(dataURL, file) {
+    // create buffer object from dataURL (result of readAsDataURL)
+    // it is important to tell the constructor that the string is base64 encoded
+    var base64str = dataURL.match(/,(.*)$/)[1];
+    var bitmap = new Buffer(base64str, 'base64');
+    // write buffer to file
+    fs.writeFileSync(file, bitmap);
+    console.log('******** File created from base64 encoded string ********');
+}
 
 //====================db schema preparation for mongoose==================
 //decorSchema is not strict so data not defined can be saved into db
@@ -142,6 +153,24 @@ router.get('/api/decors',function(req,res,next){
 	    eval('query'+unescape(req.query.criteria));
 	}
     }
+    query.exec(function(err,decors){
+	//base64decode backgroundurl to /img/backgrounds if it does not exist
+	for(var i=0;i<decors.length;i++){
+	    var filename = 'public/img/backgrounds/' + decors[i]._doc._id.toString()+'.jpg';
+	    fs.exists(filename,(function(){
+		var decor = decors[i];
+		var filename = 'public/img/backgrounds/' + decor._doc._id.toString()+'.jpg';
+		return function(exists){
+		    if(!exists){
+			base64_decode(decor._doc.decor.backgroundurl,filename);
+		    }
+		}
+	    })());
+	}
+    });
+    if(req.query.select){
+	query.select(req.query.select);
+    }
     var page = req.query.page, perPage = 12;//20;
     query.paginate({limit:perPage,offset:perPage * page},function(err,total,decors){
 	if(err){
@@ -205,6 +234,10 @@ router.post('/api/decors/',
 	    return next(err);
 	}
 	if(true){
+	    //decode backgroundurl base64 string
+	    var filename = 'public/img/backgrounds/' + decor._doc._id.toString()+'.jpg';
+	    base64_decode(decor._doc.decor.backgroundurl,filename);
+	    //schedule email
 	    var emailDate = Date.create("2 minutes from now");
 	    agenda.schedule(emailDate, 'send email after save', decor._id);//.repeatEvery('1 week');
 	    if(decor.decor.askpro){
@@ -231,6 +264,13 @@ router.put('/api/decors/:id',
 				    console.log("error occured in findByIdAndUpdate " + err);
 				    return next(err);
 				}
+
+				//decode backgroundurl base64 string
+				if (true) {
+				    var filename = 'public/img/backgrounds/' + decor._doc._id.toString()+'.jpg';
+				    base64_decode(decor._doc.decor.backgroundurl,filename);
+				}
+
 				//Suger: var alertDate = Date.create('Next ' + show.airsDayOfWeek + ' at ' + show.airsTime).rewind({ hour: 2});
 				//Next Saturday at 8:00 PM
 				var emailDate = Date.create("2 minutes from now");
