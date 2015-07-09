@@ -123,8 +123,14 @@ angular.module("lightgalaApp")
 			  onRouteChangeOff(); //Stop listening for location changes
 			  $location.path(newUrl); //Go to page they're interested in
 		      }else{
-			  //dirty, ask save or not
-			  exitModal.$promise.then(exitModal.show);
+			  //dirty, ask save or not if currently logged in
+			  if($rootScope.currentUser){
+			      exitModal.$promise.then(exitModal.show);
+			  }else{
+			      //decorDataService.resetData();
+			      onRouteChangeOff(); //Stop listening for location changes
+			      $location.path(newUrl); //Go to page they're interested in
+			  }
 		      }
 		      //prevent navigation by default since we'll handle it
 		      //once the user selects a dialog option
@@ -345,7 +351,9 @@ angular.module("lightgalaApp")
 	      }else{
 		  var anim = lightAnimService.getAnim();
 		  anim.stop(function(){});
-		  scope.animate_defer.resolve("animate stopped");
+		  if(scope.animate_defer){
+		      scope.animate_defer.resolve("animate stopped");
+		  }
 	      }
 	      animateAll(animate);
 	  }
