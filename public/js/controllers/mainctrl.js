@@ -158,7 +158,7 @@ angular.module("lightgalaApp")
 
 	$scope.loadMoreDecors = function(){
 	    $('#loadmoredecor').prop('disabled', true);
-	    decorsListService.query({select: '-decor.backgroundurl -decor.decor_lines -tools -widgets -defs -links -animations',
+	    decorsListService.query({select: '-decor.backgroundurl -decor.mediaurl -decor.decor_lines -tools -widgets -defs -links -animations',
 				     criteria: $scope.criteria, 
 				     criteria_type: 'has_keyword', 
 				     page:$scope.currentPage+1}).$promise.then(function(decors){
@@ -274,8 +274,7 @@ angular.module("lightgalaApp")
 
 	    for(var i=0;i<$scope.decors_featured.length;i++){
 		//decorsListService.query({criteria: $scope.decors_featured[i].criteria, page:0}).$promise.then((function(i){
-		decorsListService.query({select: '-decor.backgroundurl -decor.decor_lines -tools -widgets -defs -links -animations',
-					 exclude : 'decor.backgroundurl',
+		decorsListService.query({select: '-decor.backgroundurl  -decor.mediaurl -decor.decor_lines -tools -widgets -defs -links -animations',
 					 criteria: $scope.decors_featured[i].criteria instanceof Function? $scope.decors_featured[i].criteria() : $scope.decors_featured[i].criteria, 
 					 criteria_type: $scope.decors_featured[i].criteria_type, 
 					 no_user_limit: $scope.decors_featured[i].no_user_limit, 
