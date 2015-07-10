@@ -18,6 +18,11 @@ body {
     margin: 0;
     background-color: #f1f1f1;
     padding-top: 60px;
+    overflow-y: hidden;
+}
+
+body:hover {
+    overflow-y: scroll;
 }
 
 .left-pane {
