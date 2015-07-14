@@ -48,8 +48,8 @@ app.use(cookieParser());
 app.use(session({secret: 'guzhia1gaya4deyaqiang'}));
 app.use(passport.initialize());
 app.use(passport.session());
-//app.use(express.static(path.join(__dirname,'public')));
-app.use(qt.static(path.join(__dirname,'public')));
+app.use(express.static(path.join(__dirname,'public')));
+app.use('/img',qt.static(path.join(__dirname,'/../img')));
 app.use(function(req,res,next){
     if(req.user){
 	res.cookie('user',JSON.stringify(req.user));
