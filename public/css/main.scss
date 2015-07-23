@@ -18,11 +18,6 @@ body {
     margin: 0;
     background-color: #f1f1f1;
     padding-top: 60px;
-    overflow-y: hidden;
-}
-
-body:hover {
-    overflow-y: scroll;
 }
 
 .left-pane {
@@ -41,6 +36,10 @@ body:hover {
     right: 0px;
     background-color: #f1f1f1;
     height: 100%;
+    /*overflow-y: scroll;*/
+    overflow-y: hidden;
+}
+.right-pane:hover {
     overflow-y: scroll;
 }
 .right-pane-heading {
