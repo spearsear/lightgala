@@ -30,7 +30,7 @@ angular.module("lightgalaApp")
 		})
 	    }
     }}])
-    .directive('popOver', ['$compile','utilService','toolService','lightAnimService',function ($compile,utilService,toolService,lightAnimService) {
+    .directive('popOver', ['$compile','$window','utilService','toolService','lightAnimService',function ($compile,$window,utilService,toolService,lightAnimService) {
 	//be careful, need to escape backslash in regex with another backslash in template of directive
 	//and notice how toolname is passed to selectTool defined in isoloatedscope pointing to selectTool in controller scope
 	//var animationsTemplate = "<table class='table table-condensed small anim-settings'><tr><th><small style='white-space: nowrap;display:inline-block'><span class='glyphicon icon-plus2' ng-click=selectTool({toolname:'animatestartplusfivesecondtool'})></span>{{anim_start_second}}<span class='glyphicon icon-minus' ng-click=selectTool({toolname:'animatestartminusfivesecondtool'})></span></small></th><th>set</th><th>seg</th><th>start</th><th>pattern</th><th>dur</th><th>delay</th><th>smooth</th></tr>	    <tr ng-repeat='anim in animations | filter:selectAnimation(decor_line_id)' decor_line_id='{{anim.decor_line_id}}' style='background-color:{{anim.config.stopcolor2}}' ng-mouseover='mouseOverAnim(anim.anim_id)' ng-mouseout='mouseLeaveAnim(anim.anim_id)'>	      <td><small><span class='glyphicon glyphicon-trash' anim-id='{{anim.anim_id}}' ng-click='delAnimation(anim.anim_id)'></span></small></td><td>{{anim.set}}</td><td>{{anim.segment}}</td><td><input type='number' ng-model='anim.start_second' ng-pattern='/^[\\d.]+$/' class='anim-input input-sm' /></td>	      <td><input ng-model='anim.config.pattern_code' ng-pattern='/^[01]+$/' class='anim-input input-sm' /></td>	      <td><input ng-model='anim.config.dur' ng-pattern='/^[\\d.]+s$/' class='anim-input input-sm' /></td>	      <td><input ng-model='anim.config.begin' ng-pattern='/^[\\d.]+s$/' class='anim-input input-sm' /></td>	      <td><select ng-model='anim.config.calcmode' ng-options='x.value as x.text for x in calcmodes' class='anim-input' /></td>	    </tr>	  </table>";
@@ -104,9 +104,14 @@ angular.module("lightgalaApp")
 		    if(anim){
 			d3.select("svg").select("g[decor_line_id='"+anim.decor_line_id+"']")
 			    .selectAll("g[segment='"+anim.segment+"'][set='"+anim.set+"'][bulbcolor='"+anim.color+"']")
-			    .selectAll(".click-capture")
-			    .style("visibility","visible")
-			    .classed("highlighted",true);
+			    //.selectAll(".click-capture")
+			    //.style("visibility","visible")
+			    .append("image")
+			    .classed("pointer",true)
+			    .attr("xlink:href","/img/pointer.png")
+			    .attr("width",30)
+			    .attr("height",30);
+			    //.attr("fill","url("+$window.location+"#pointer)");
 		    }
 		};
 		scope.mouseLeaveAnim = function(anim_id){
@@ -116,9 +121,10 @@ angular.module("lightgalaApp")
 		    if(anim){
 			d3.select("svg").select("g[decor_line_id='"+anim.decor_line_id+"']")
 			    .selectAll("g[segment='"+anim.segment+"'][set='"+anim.set+"'][bulbcolor='"+anim.color+"']")
-			    .selectAll(".click-capture")
-			    .style("visibility","hidden")
-			    .classed("highlighted",false);
+			    //.selectAll(".click-capture")
+			    //.style("visibility","hidden")
+			    .selectAll("image.pointer")
+			    .remove();
 		    }
 		};
                 var popOverContent;
