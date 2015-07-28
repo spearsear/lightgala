@@ -216,10 +216,10 @@ angular.module("radialgradient.module",["colorpicker.module"])
 					+ "<div class='stopcolor-Ctrl'>"
 					+ "  <div class='stopcolor-Chooser'>"
 					+ "    <div ng-repeat='color in rgdata.colors' class='stopcolor {{stopColorClass(color)}}' colorpicker='rgb' colorpicker-close-on-select colorpicker-position='bottom' ng-model='rgdata.colors[$index].color' style='{{ computeStopColorStyle($index) }}'></div>"
-					+ "		<div class='rgchooser-Reset' ng-click='resetRgChooser()'>{{ computeRgdataIndexInTemps() }}</div>"
+					+ "		<div class='rgchooser-Reset' ng-click='resetRgChooser(); $event.stopPropagation();'>{{ computeRgdataIndexInTemps() }}</div>"
 					+ "  </div>"
 					+ "  <div class='stopcolor-ToggleStop rgchooser-Ctrl' ng-if='isDirty()'>"
-					+ "    <div ng-repeat='color in rgdata.colors' class='stopcolor {{stopColorClass(color)}}' ng-click=' toggleStopColorOriginal($index) ' style='{{ computeStopColorToggleStyle($index) }}'></div>"
+					+ "    <div ng-repeat='color in rgdata.colors' class='stopcolor {{stopColorClass(color)}}' ng-click=' toggleStopColorOriginal($index); $event.stopPropagation(); ' style='{{ computeStopColorToggleStyle($index) }}'></div>"
 					+ "  </div>"
 					+ "</div>"
 					+ "</div></div>",
@@ -232,6 +232,12 @@ angular.module("radialgradient.module",["colorpicker.module"])
           		}
 
 				target.append(rgChooserTemplate);
+
+			    //disable select
+			    rgChooserTemplate.onselectstart = function(){return false;};
+			    rgChooserTemplate.unselectable = "on";
+			    rgChooserTemplate.css('-moz-user-select', 'none'); 
+                            rgChooserTemplate.css('-webkit-user-select', 'none'); 
 
           		//setup and render rgChooser view in d3
 				if(attrs.stopcolor1 || attrs.stopcolor2){
