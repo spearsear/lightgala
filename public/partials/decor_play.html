@@ -3,7 +3,14 @@
     <div class="col-md-8" ng-controller="decorCtrl">
       <div class="row decor_area">
 	<div id="decor_dummy"></div>
-	<div main-decor mode='play' prompt='Loading, please wait...' class="whitebackground decor_svg decormain"></div>
+	<!--<div main-decor mode='play' prompt='Loading, please wait...' class="whitebackground decor_svg decormain"></div>-->
+	<div ng-if="renderOn=='svg'">
+	  <div main-decor mode='play' prompt='Loading, please wait...' class="whitebackground decor_svg decormain"></div>
+	</div>
+	<div ng-if="renderOn=='canvas'">
+	  <div main-decor mode='play' prompt='Loading, please wait...' backgroundonly class="whitebackground decor_svg decormain"></div>
+	  <div decorcanvas mode='play' class="decor_svg decormain"></div>
+	</div>
 	<div class='main_spinner'><span us-spinner="{radius:30, width:8, length: 16}" spinner-key="spinner-1"></span></div>
 	<div ads adname='ads_decor'></div>
 	<div class="{{minmaxAdClass()}}">
@@ -103,9 +110,9 @@
 	<div class="row hidden-sm decors-list" ng-controller="mainCtrl">
 	  <div ng-repeat="decor in decors | filter: excludeCurrentViewedDecor" class="row hidden-xs decor-related col-md-12">
 	    <div class="col-md-4 bottom-buffer left-buffer">
-	      <a href="/decor/{{decor._id}}">
+	      <a href="/decor/{{decor._id}}" class="decor_img">
 		<!--<img ng-src="{{decor.decor.backgroundurl}}" alt="" class="img-responsive">-->
-		<img ng-src={{"/img/backgrounds/"+decor._id+".jpg?dim=200x140"}} alt="" class="img-responsive"/>
+		<img ng-src={{"/img/backgrounds/"+decor._id+".jpg?dim=200x140"}} alt="" width="100%"/>
 	      </a>
 	    </div>
 	    <div class="col-md-7 nopadding decors-list-desc">
