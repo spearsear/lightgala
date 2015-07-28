@@ -179,11 +179,11 @@ angular.module("lightgalaApp")
 	  app_data: app_data,
 	  //decor data methods
 	  getData: function(){
-	      return this.data;
+	      return angular.copy(this.data);
 	  },
 	  setData: function(newData){
 	      //cache newData in data
-	      this.data = newData;
+	      this.data = angular.copy(newData);
 	  },
 	  resetData: function(){
 	      this.data = angular.copy(data_empty);
