@@ -5,6 +5,8 @@ angular.module("lightgalaApp")
       restrict: 'EA',
       templateUrl: "../../partials/playtools.html",
       link: function(scope,ele,attrs){
+	  //playtool could render before maindecor directive, so need to set mode here to avoid it not being set
+	  scope.mode = 'play';
 	  scope.show_tool_options = false;
 	  scope.toggleToolOptions = function(toolname){
 	      var i = _.findIndex(scope.data.tools,function(tool){
