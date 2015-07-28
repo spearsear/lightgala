@@ -56,6 +56,7 @@ angular.module("lightgalaApp")
     })
     .controller('decorCtrl',['$scope','$q','$timeout','$http','$alert','$location','$rootScope','$routeParams','baseUrl','decorsListService','subscriptionService','decorService','decorDataService','toolService','lightService','utilService','vcRecaptchaService','usSpinnerService',function($scope,$q,$timeout,$http,$alert,$location,$rootScope,$routeParams,baseUrl,decorsListService,subscriptionService,decorService,decorDataService,toolService,lightService,utilService,vcRecaptchaService,usSpinnerService){
       $scope.name = 'decorCtrl scope';
+      $scope.renderOn = 'svg';  //canvas or svg
       //initialize data with data in decordataservice(cached data)
       $scope.data = decorDataService.getData();
       $scope.app_data = decorDataService.getAppData();
@@ -65,7 +66,7 @@ angular.module("lightgalaApp")
       $scope.setDirty(false);
       $scope.getPrompt = function(){
 	  return angular.isUndefined($routeParams.id) ? {prompt:'Click to load a picture to decorate on',cycle:false} : {prompt:'Loading, please wait...',cycle:true};
-      }
+      };
       $scope.recaptcha = {
 	  key: "6Le3FAETAAAAALObaPdsf277KQlhJ2BN1N90sPda",
 	  setResponse: function (response) {
@@ -76,7 +77,78 @@ angular.module("lightgalaApp")
               console.info('Created widget ID: %s', widgetId);
               this.widgetId = widgetId;
           }
-      }
+      };
+      $scope.loadDecor = function(){
+	  if(!$scope.mode){
+	      //kludge, ugly. but sometimes mode is undefined due to ng-if in decor_play.html
+	      $scope.mode = 'play';
+	  }
+	  if($routeParams.id){
+	      //console.log("retrieving decor_id " + scope.decor_id);
+	      //use $resource
+	      decorsListService.get({_id:$routeParams.id,mode:$scope.mode},function(decor){
+		  if(!decor.with_app_data){
+		      $scope.data=decor;
+		      //replace widget data and tools data with that in app_data
+		      $scope.data.widgets=decorDataService.getAppData().widgets;
+		      $scope.data.tools=decorDataService.getAppData().tools;
+		      $scope.data.defs=decorDataService.getAppData().defs;
+		  }else{
+		      $scope.data=decor;
+		  }
+		  $scope.decor_id = decor._id;
+		  $rootScope.$broadcast("data_ready",{
+		  });
+	      },function(response) {
+		  if(response.status === 401) {
+		      $location.path('/login');
+		      $alert({
+			  title: 'Login required!',
+			  content: 'Login required before editing decor.',
+			  placement: 'top-right',
+			  type: 'danger',
+			  duration: 3
+		      });
+		  }
+	      });
+	  }else{
+	      //could start from cached data other than data_empty
+	      console.log("make a new decor");
+	      $rootScope.$broadcast("data_ready",{
+	      });
+	  }
+	  if($routeParams.template_id){
+	      //use $resource
+	      decorsListService.get({_id:$routeParams.template_id,mode:'edit_template'},function(decor){
+		  $scope.data.decor.backgroundurl=decor.decor.backgroundurl;
+		  $scope.data.decor.emailto=!decor.decor.user_id.fakedemail?decor.decor.user_id.email:'spearsear@gmail.com';  //populated with email
+		  $scope.data.decor.address=decor.decor.address;
+		  if(!decor.with_app_data){
+		      //replace widget data and tools data with that in app_data
+		      $scope.data.widgets=decorDataService.getAppData().widgets;
+		      $scope.data.tools=decorDataService.getAppData().tools;
+		      $scope.data.defs=decorDataService.getAppData().defs;
+		  }else{
+		      $scope.data.widgets=decor.widgets;
+		      $scope.data.tools=decor.tools;
+		      $scope.data.tools=decor.defs;
+		  }
+		  $rootScope.$broadcast("data_ready",{
+		  });
+		  console.log("using decor "+decor._id+" as template");
+	      },function(response) {
+		  if(response.status === 401) {
+		      $alert({
+			  title: 'Login required!',
+			  content: 'Login required before editing decor.',
+			  placement: 'top-right',
+			  type: 'danger',
+			  duration: 3
+		      });
+		  }
+	      });
+	  }
+      };
       $scope.saveDecor = function(){
 	  //save asyncly
 	  if(!$rootScope.currentUser){
@@ -418,10 +490,21 @@ angular.module("lightgalaApp")
 	  return tool.icon_toggle? tool.icons[1] : tool.icons[0];
       };
       $scope.mouseOverDecorLine = function(decor_line_id){
-	  $scope.svg.select("g[decor_line_id='"+decor_line_id+"']").selectAll(".click-capture").style("visibility","visible").classed("highlighted",true);
+	  $scope.svg.select("g[decor_line_id='"+decor_line_id+"']")
+	      //.selectAll(".click-capture").style("visibility","visible").classed("highlighted",true);
+	      .selectAll("g.decor_line_element")
+	      .append("image")
+	      .classed("pointer",true)
+	      .attr("xlink:href","/img/pointer.png")
+	      .attr("width",30)
+	      .attr("height",30);
       };
       $scope.mouseLeaveDecorLine = function(decor_line_id){
-	  $scope.svg.select("g[decor_line_id='"+decor_line_id+"']").selectAll(".click-capture").style("visibility","hidden").classed("highlighted",false);
+	  $scope.svg.select("g[decor_line_id='"+decor_line_id+"']")
+	      //.selectAll(".click-capture").style("visibility","hidden").classed("highlighted",false);
+	      .selectAll("g.decor_line_element")
+	      .selectAll("image.pointer")
+	      .remove();
       };
       $scope.toggleDecorLine = function(decor_line_id){
 	  var i = utilService.getArrayIndexWithPropertyEqualTo($scope.data.decor.decor_lines,"decor_line_id",decor_line_id);
