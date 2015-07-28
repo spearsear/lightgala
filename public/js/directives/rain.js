@@ -5,6 +5,8 @@ angular.module("lightgalaApp")
       restrict: 'EA',
       templateUrl: "../../partials/weather.html",
       controller: ["$scope","$element","$timeout",function($scope,$element,$timeout){
+	  $scope.width = document.getElementsByClassName("mainpic")[0].getBoundingClientRect().width;
+	  $scope.height = $scope.width * $scope.data.decor.decor_aspect_ratio;
 	  $timeout(function(){
 	      var xhtmlNS = 'http://www.w3.org/1999/xhtml';
 	      var canvas = $document[0].getElementsByTagNameNS(xhtmlNS,'canvas')[0];
