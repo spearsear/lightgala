@@ -4,93 +4,12 @@ angular.module("lightgalaApp")
 	  scope.mode = attrs['mode']; //or view from attrs
 	  //text shown in svg before backgroundurl is set
 	  scope.backgroundtext = attrs['prompt'];
-	  //scope.data.decor.backgroundurl = "/img/house.jpg";
+	  //render background only on svg
+	  scope.backgroundonly = !angular.isUndefined(attrs['backgroundonly']);
 	  scope.trashurl = "/img/trash.png";
 	  scope.margins = {left: 14, right: 14, top: 10, bottom: 10};
 	  //default current config
 	  //scope.element_config = toolService.getTool("").current_config.install_supported_defs(scope.data.defs);
-
-	  scope.init = function(){
-	      if($routeParams.id){
-		  //console.log("retrieving decor_id " + scope.decor_id);
-		  if(true){
-		    //use $resource
-		    decorsListService.get({_id:$routeParams.id,mode:scope.mode},function(decor){
-			if(!decor.with_app_data){
-			    scope.data=decor;
-			    //replace widget data and tools data with that in app_data
-			    scope.data.widgets=decorDataService.getAppData().widgets;
-			    scope.data.tools=decorDataService.getAppData().tools;
-			    scope.data.defs=decorDataService.getAppData().defs;
-			}else{
-			    scope.data=decor;
-			}
-			scope.decor_id = decor._id;
-			$rootScope.$broadcast("data_ready",{
-			});
-		    },function(response) {
-			if(response.status === 401) {
-			    $location.path('/login');
-			    $alert({
-				title: 'Login required!',
-				content: 'Login required before editing decor.',
-				placement: 'top-right',
-				type: 'danger',
-				duration: 3
-			    });
-			}
-		    });
-		  }else{
-		    //use $http
-		    $http.get('/db/collections/decors/' + $routeParams.id)
-		      .success(function(data,status,headers,config){
-			  scope.data = data;
-			  scope.decor_id = data._id;
-		      })
-		      .error(function(data,status,headers,config){
-			  scope.status = status;
-		      });
-		  }
-	      }else{
-		  //could start from cached data other than data_empty
-		  console.log("make a new decor");
-		  $rootScope.$broadcast("data_ready",{
-		  });
-	      }
-	      if($routeParams.template_id){
-		  if(true){
-		    //use $resource
-		    decorsListService.get({_id:$routeParams.template_id,mode:'edit_template'},function(decor){
-			scope.data.decor.backgroundurl=decor.decor.backgroundurl;
-			scope.data.decor.emailto=!decor.decor.user_id.fakedemail?decor.decor.user_id.email:'spearsear@gmail.com';  //populated with email
-			scope.data.decor.address=decor.decor.address;
-			if(!decor.with_app_data){
-			    //replace widget data and tools data with that in app_data
-			    scope.data.widgets=decorDataService.getAppData().widgets;
-			    scope.data.tools=decorDataService.getAppData().tools;
-			    scope.data.defs=decorDataService.getAppData().defs;
-			}else{
-			    scope.data.widgets=decor.widgets;
-			    scope.data.tools=decor.tools;
-			    scope.data.tools=decor.defs;
-			}
-			$rootScope.$broadcast("data_ready",{
-			});
-			console.log("using decor "+decor._id+" as template");
-		    },function(response) {
-			if(response.status === 401) {
-			    $alert({
-				title: 'Login required!',
-				content: 'Login required before editing decor.',
-				placement: 'top-right',
-				type: 'danger',
-				duration: 3
-			    });
-			}
-		    });
-		  }
-	      }
-	  };
 
 	  /*ele.bind("$destroy", function () {
 	      if(scope.current.music.playing){
@@ -98,6 +17,17 @@ angular.module("lightgalaApp")
 		  toolService.getTool('musictool').invoke().afterinvoke(scope);
 	      }
           });*/
+
+	  if(scope.mode === 'play'){
+	      //always clean data before entering play mode, data will come from loadDecor
+	      if(scope.data){
+		  scope.data.decor.backgroundurl= '';
+		  scope.data.decor.decor_lines= [];
+	      }
+	  }else{
+	      //edit mode show whatever is in cache
+	      scope.data = decorDataService.getData();
+	  }
 
 	  var onRouteChangeOff = scope.$on('$locationChangeStart', function (event,newUrl) {
 	      if(scope.current.animation.start){
@@ -119,7 +49,7 @@ angular.module("lightgalaApp")
 		  }else{
 		      var exitModal = $modal({template: 'partials/exitdecor.html', show: false, backdrop: 'static', scope:scope});
 		      if(!scope.dirty){
-			  decorDataService.resetData();
+			  //decorDataService.resetData();
 			  onRouteChangeOff(); //Stop listening for location changes
 			  $location.path(newUrl); //Go to page they're interested in
 		      }else{
@@ -127,7 +57,9 @@ angular.module("lightgalaApp")
 			  if($rootScope.currentUser){
 			      exitModal.$promise.then(exitModal.show);
 			  }else{
+			      //do not resetdata even if user is not signed in
 			      //decorDataService.resetData();
+			      decorDataService.setData(scope.data);
 			      onRouteChangeOff(); //Stop listening for location changes
 			      $location.path(newUrl); //Go to page they're interested in
 			  }
@@ -137,10 +69,6 @@ angular.module("lightgalaApp")
 		      event.preventDefault();
 		      //return;
 		  }
-	      }
-	      if(scope.mode === 'play'){
-		  //always clean data as data_empty and reinitialize app_data before leaving play mode
-		  decorDataService.resetData();
 	      }
 	      decorDataService.resetAppData();
 	      //reset tool config for play and edit mode
@@ -299,58 +227,79 @@ angular.module("lightgalaApp")
 	  scope.animateStart = function(animate){
 	      //var decor_line_ids = _.pluck(scope.data.decor.decor_lines,function(x){return x.decor_line_id});
 	      if(animate){
-		  //prepare animation by setting all to be inactive
-		  _.forEach(scope.data.animations,function(anim){
-		      if(anim.start_second>0){
-			  anim.active = false;
-		      }else{
-			  anim.active = true;
-		      }
-		  });
-		  if(!scope.$$phase){	      
-	              scope.$apply();
+		  if(scope.renderOn == 'canvas'){
+		      scope.animate_defer.resolve("animate started");
+		      return;
 		  }
+		  //setting those animations which should start earliest active and the rest inactive, start_second_min usually is 0
+		  //var start_second_min = _.min(_.pluck(scope.data.animations,function(a){return a.start_second}));
+		  //hahaha
 		  //start animation of each decor_line by setting active fired at start_seond by timeout service
 		  var anim = lightAnimService.getAnim();
 		  _.forEach(scope.data.decor.decor_lines,function(dl){
 		      //remove all inactive anims dom element
 		      scope.decor_line_anim_enter_func(dl.decor_line_id);
 		      //anim.start(scope.data.animations,function(start_second){
-		      anim.start(_.filter(scope.data.animations,function(a){return a.decor_line_id == dl.decor_line_id}),function(start_second){
-			  _.forEach(scope.data.animations.sort(utilService.dynamicSortMultiple("start_second","set","segment")),function(a){
-			      if(a.decor_line_id == dl.decor_line_id){
-				  //kept a with last start_second if a has no start_second
-				  if(a.start_second == start_second){
-				      a.active = true;
-				  }else{
-				      if(a.start_second <= start_second){
-					  //keep a active if there is no other a of same color bewteen a.start_second and start_second
-					  var other_anims = _.filter(scope.data.animations,function(other_anim){
-					      return other_anim.color == a.color &&
-					          other_anim.decor_line_id == dl.decor_line_id &&
-					          other_anim.start_second > a.start_second &&
-					          other_anim.start_second <= start_second;
-					  })
-					  if(other_anims.length==0){
-					      a.active = true;
-					  }else{
-					      a.active = false;
-					  }
-				      }else{
-					  a.active = false;
-				      }
-				  }
-			      }
-			  });
-			  //write animConfig from animations to radialgradient of decor_line dom, this is the bottleneck of animation
-			  //to update active status. TEMPORARILY DISABLED FOR SLOW PERFORMANCE
-			  scope.decor_line_anim_update_func(dl.decor_line_id);
-			  scope.animate_defer.resolve("animate started");
-		      },function(){},3);//10 numcycles
+		      var animations_dl = _.filter(scope.data.animations,function(a){return a.decor_line_id == dl.decor_line_id});
+		      anim.start(animations_dl,
+				 //callback func generated in sef
+				 (function(){
+				     return function(start_second){
+					 _.forEach(animations_dl.sort(utilService.dynamicSortMultiple("start_second","set","segment")),function(a){
+					     //if(a.decor_line_id == dl.decor_line_id){
+					     if(true){
+						 //kept a with last start_second if a has no start_second
+						 if(a.start_second == start_second){
+						     a.active = true;
+						 }else{
+						     if(a.start_second <= start_second){
+							 //keep a active if there is no other a of same color bewteen a.start_second and start_second
+							 var other_anims = _.filter(scope.data.animations,function(other_anim){
+							     return other_anim.color == a.color &&
+								 other_anim.decor_line_id == dl.decor_line_id &&
+								 other_anim.start_second > a.start_second &&
+								 other_anim.start_second <= start_second;
+							 })
+							 if(other_anims.length==0){
+							     a.active = true;
+							 }else{
+							     a.active = false;
+							 }
+						     }else{
+							 a.active = false;
+						     }
+						 }
+					     }
+					 });
+					 //write animConfig from animations to radialgradient of decor_line dom, this is the bottleneck of animation
+					 //to update active status. TEMPORARILY DISABLED FOR SLOW PERFORMANCE
+					 scope.decor_line_anim_update_func(dl.decor_line_id);
+					 //scope.animate_defer.resolve("animate started");
+				     }
+				 })(),
+				 //callback_cycle_stop
+				 function(){
+				     _.forEach(scope.data.animations,function(anim){
+					 //if(anim.start_second>start_second_min){
+					 if(anim.start_second>0){
+					     anim.active = false;
+					 }else{
+					     anim.active = true;
+					 }
+				     });
+				     if(!scope.$$phase){	      
+					 scope.$apply();
+				     }
+				 },3);//10 numcycles
+		      scope.animate_defer.resolve("animate started");
 		  });
 	      }else{
+		  if(scope.renderOn == 'canvas'){
+		      scope.animate_defer.resolve("animate stopped");
+		      return;
+		  }
 		  var anim = lightAnimService.getAnim();
-		  anim.stop(function(){});
+		  anim.stop(scope.data.animations,function(){});
 		  if(scope.animate_defer){
 		      scope.animate_defer.resolve("animate stopped");
 		  }
@@ -609,7 +558,7 @@ angular.module("lightgalaApp")
 		}
             });
 	      
-            scope.renderLightGala = function(decor_lines){
+            scope.renderDecorLines = function(decor_lines){
               scope.svg.select("g.decor g.decor_lines").selectAll("g.decor_line").remove();
 	      scope.svg.select("g.decor").append("g").attr("class","decor_lines");
 	      scope.xScale = d3.scale.linear()
@@ -770,6 +719,12 @@ angular.module("lightgalaApp")
 		    bbox = outline_ele.getBBox(),
 		    scaleFactor = scope.rScale(d.scale_factor);
 		    return "translate("+scope.xScale(d.x-scope.xScale_reverse(bbox.x+bbox.width/2)-scope.xScale_reverse(bbox.x+bbox.width/2)*(scaleFactor-1))+","+scope.yScale(d.y-scope.yScale_reverse(bbox.y+bbox.height/2)-scope.yScale_reverse(bbox.y+bbox.height/2)*(scaleFactor-1))+") scale("+scaleFactor+") rotate("+scope.element_config.rotate(d.rotate_degree)+","+(bbox.x+bbox.width/2)+","+(bbox.y+bbox.height/2)+")";
+		   }).each(function(d){
+		       //keep element w/h in d
+		       var outline_ele = d3.select(this).select(".outline").node(),
+		           brect = outline_ele.getBoundingClientRect();
+		       d.w = Math.round(scope.xScale_reverse(brect.width));
+		       d.h = Math.round(scope.yScale_reverse(brect.height));
 		   });		
 
 		scope.syncAnimsWithElements(decor_line_id);
@@ -793,7 +748,11 @@ angular.module("lightgalaApp")
 		scope.svg.select("g.decor g.decor_lines g.decor_line[decor_line_id='"+decor_line_id+"']").selectAll("g.anim").remove();
 		scope.svg.select("g.decor g.decor_lines g.decor_line[decor_line_id='"+decor_line_id+"']").selectAll("g.anim")
 		    .data(_.filter(scope.data.animations,function(a){
-			return a.decor_line_id == decor_line_id && a.active;
+			//return a.decor_line_id == decor_line_id && a.active;
+			//when a decor line has no animation at start_second=0, it will not be set as active by animateStart
+			//but it still needs to enter as animation, so enter all animations for the decor_line here
+			//irregardless of the active status, rely on anim_update_func to update anim
+			return a.decor_line_id == decor_line_id;
 		    }),function(d){
 			//return d.anim_id;
 			//use anim identifier without start_second
@@ -1050,7 +1009,13 @@ angular.module("lightgalaApp")
 		     //inside xScale, move: d.x-(bbox.x+bbox.width/2)
 		     //               then -centerX*(factor-1)
 		     return "translate("+scope.xScale(d.x-scope.xScale_reverse(bbox.x+bbox.width/2)-scope.xScale_reverse(bbox.x+bbox.width/2)*(scaleFactor-1))+","+scope.yScale(d.y-scope.yScale_reverse(bbox.y+bbox.height/2)-scope.yScale_reverse(bbox.y+bbox.height/2)*(scaleFactor-1))+") scale("+scaleFactor+") rotate("+scope.element_config.rotate(d.rotate_degree)+","+(bbox.x+bbox.width/2)+","+(bbox.y+bbox.height/2)+")";
-		   });
+		   }).each(function(d){
+		       //keep element w/h in d
+		       var outline_ele = d3.select(this).select(".outline").node(),
+		           brect = outline_ele.getBoundingClientRect();
+		       d.w = Math.round(scope.xScale_reverse(brect.width));
+		       d.h = Math.round(scope.yScale_reverse(brect.height));
+		   });		   
 
 		   //show ruler
 		     if(scope.data.decor.decor_lines[i].decor_line_type == 'measurementScaling' && 
@@ -1080,7 +1045,7 @@ angular.module("lightgalaApp")
 		scope.svg.on("click",svg_onclick_func);
 		scope.svg.on("mouseup",svg_mouseup_func);
 
-            }//end renderLightGala function
+            }//end renderDecorLine function
 
 	    window.onmousemove = function (e) {
 		if (!e) e = window.event;
@@ -1236,7 +1201,9 @@ angular.module("lightgalaApp")
 			.attr("fill",utilService.randomColor())
 			.each(cycle);
 		}
-                scope.renderLightGala(scope.data.decor.decor_lines);
+		if(!scope.backgroundonly){
+                    scope.renderDecorLines(scope.data.decor.decor_lines);
+		}
 		scope.svg.select("g.decor").append("g").attr("class","foreground");
               }
             }; //end renderBackground
@@ -1255,7 +1222,7 @@ angular.module("lightgalaApp")
 
 	    //render empty background with loading prompt while loading data
 	    scope.renderBackground();
-	    scope.init();
+	    scope.loadDecor();
 
           }); //end d3 then
 	}; //end return 
