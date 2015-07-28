@@ -260,36 +260,56 @@ angular.module("lightgalaApp")
 		});
 	},
 	start: function(animations,callback,callback_cycle_stop,numcycles){
-	    //start animation defined in animations
+	    //animations input all belong to same one decor_line_id
+	    //start animation defined in animations, callback func set which anim is active after current animation is done
+	    //then anim_update_func will set active animation data into anim element
 	    var self=this;
 	    var cycle_seconds=_.max(animations,function(anim){return anim.start_second}).start_second + 30;
 	    //do not stop anim here otherwise timers of other decor_line will be cleared
 	    //self.stop(function(){});
+	    var decor_line_id;
 	    for(var i=0;i<animations.length;i++){
-		self.timers.push($timeout((function(){
-		    var j = i;
-		    return function(){
-			//console.log('Animation ' + animations[j].anim_id + ' fired');
-			callback(animations[j].start_second);
-		    }
-		})(),animations[i].start_second*1000));
+		//start_second need to be after all element completed their duration in the i-1 animation
+		decor_line_id = animations[i].decor_line_id;
+		self.timers.push({
+		    decor_line_id:decor_line_id,
+		    timer_type: '',
+		    timeout_id:$timeout((function(){
+			var j = i;
+			return function(){
+			    callback(animations[j].start_second);
+			}
+		    })(),(animations[i].start_second)*1000)
+		});
 	    }
 	    //cycle restart as last timer
-	    self.timers.push($timeout(function(){
-		console.log("restart cycle "+(numcycles-1));
-		self.stop(callback_cycle_stop);
-		if(numcycles-1>0){
-		    self.start(animations,callback,callback_cycle_stop,numcycles-1);
-		}
-	    },cycle_seconds*1000));
+	    self.timers.push({
+		decor_line_id: decor_line_id,
+		timer_type: 'restart',
+		timeout_id: $timeout(function(){
+		    self.stop(animations,callback_cycle_stop);
+		    if(numcycles-1>0){
+			console.log("restart cycle "+(numcycles-1) + " for decor_line_id " + decor_line_id);
+			self.start(animations,callback,callback_cycle_stop,numcycles-1);
+		    }else{
+			console.log("end of cycle" + " for decor_line_id " + decor_line_id);
+		    }
+		},cycle_seconds*1000)
+	    });
 	    return this;
 	},
-        stop: function(callback){
-	    if(this.timers.length>0){
-		for(var i=0;i<this.timers.length;i++){
-		    $timeout.cancel(this.timers[i]);
+        stop: function(animations,callback){
+	    var self = this;
+	    if(self.timers.length>0){
+		for(var i=self.timers.length;i>0;i--){
+		    var timer_for_animations = _.any(animations,function(a){
+			return self.timers[i-1].decor_line_id == a.decor_line_id;
+		    });
+		    if(timer_for_animations){
+			$timeout.cancel(self.timers[i-1].timer_id);
+			self.timers.splice(i-1,1);
+		    }
 		}
-		this.timers = [];
 		callback();
 	    }
 	},
