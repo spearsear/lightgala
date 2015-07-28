@@ -162,7 +162,9 @@ router.get('/api/decors',function(req,res,next){
 		var filename = 'public/img/backgrounds/' + decor._doc._id.toString()+'.jpg';
 		return function(exists){
 		    if(!exists){
-			base64_decode(decor._doc.decor.backgroundurl,filename);
+			if(decor._doc.decor.backgroundurl){
+			    base64_decode(decor._doc.decor.backgroundurl,filename);
+			}
 		    }
 		}
 	    })());
