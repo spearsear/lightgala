@@ -112,7 +112,9 @@ angular.module("lightgalaApp")
 	    var mainpic = document.getElementsByClassName("mainpic")[0];
 	    if(mainpic && (mainpic.clientWidth>0 || mainpic.parentNode.clientWidth)){
 		// firefox need parentNode.clientWidth
-		scope.renderBackground();
+		if(scope.renderBackground){
+		    scope.renderBackground();
+		}
 	    }
           },true);
 
