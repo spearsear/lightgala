@@ -1066,12 +1066,12 @@ angular.module("lightgalaApp")
 		d3.event.stopPropagation();
 
 		if(scope.mode === 'play'){
-		    return;
+		    return false;
 		}
 
 		if(!scope.data.decor.backgroundurl){
 		    scope.selectTool("cameratool");
-		    return;
+		    return false;
 		}
 
 		if (d3.event.shiftKey) {
