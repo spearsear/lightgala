@@ -1045,6 +1045,7 @@ angular.module("lightgalaApp")
 		}//end for
 
 		scope.svg.on("click",svg_onclick_func);
+		scope.svg.on("touchstart",svg_onclick_func);
 		scope.svg.on("mouseup",svg_mouseup_func);
 
             }//end renderDecorLine function
