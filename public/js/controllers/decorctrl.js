@@ -56,7 +56,17 @@ angular.module("lightgalaApp")
     })
     .controller('decorCtrl',['$scope','$q','$timeout','$http','$alert','$location','$rootScope','$routeParams','baseUrl','decorsListService','subscriptionService','decorService','decorDataService','toolService','lightService','utilService','vcRecaptchaService','usSpinnerService',function($scope,$q,$timeout,$http,$alert,$location,$rootScope,$routeParams,baseUrl,decorsListService,subscriptionService,decorService,decorDataService,toolService,lightService,utilService,vcRecaptchaService,usSpinnerService){
       $scope.name = 'decorCtrl scope';
-      $scope.renderOn = 'svg';  //canvas or svg
+      var playOnCanvas = (function(){
+	  return (
+	      (navigator.platform.indexOf('iPhone') != -1) ||
+	      (navigator.platform.indexOf('iPad') != -1) ||
+	      (navigator.platform.indexOf('iPod') != -1) ||
+	      (navigator.vendor && navigator.vendor.indexOf('Apple') != -1)
+	  );
+      })(); 
+      console.log(playOnCanvas);
+      $scope.playOn = playOnCanvas ? 'canvas' : 'svg';  //canvas or svg
+      //$scope.renderOn = 'svg';  //canvas or svg
       //initialize data with data in decordataservice(cached data)
       $scope.data = decorDataService.getData();
       $scope.app_data = decorDataService.getAppData();
