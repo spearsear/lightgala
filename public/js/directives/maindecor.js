@@ -229,7 +229,7 @@ angular.module("lightgalaApp")
 	  scope.animateStart = function(animate){
 	      //var decor_line_ids = _.pluck(scope.data.decor.decor_lines,function(x){return x.decor_line_id});
 	      if(animate){
-		  if(scope.renderOn == 'canvas'){
+		  if(scope.mode == 'play' && scope.playOn == 'canvas'){
 		      scope.animate_defer.resolve("animate started");
 		      return;
 		  }
@@ -296,7 +296,7 @@ angular.module("lightgalaApp")
 		      scope.animate_defer.resolve("animate started");
 		  });
 	      }else{
-		  if(scope.renderOn == 'canvas'){
+		  if(scope.mode == 'play' && scope.renderOn == 'canvas'){
 		      scope.animate_defer.resolve("animate stopped");
 		      return;
 		  }
@@ -1063,6 +1063,8 @@ angular.module("lightgalaApp")
 	    };
 
 	    var svg_onclick_func = function(){
+		d3.event.stopPropagation();
+
 		if(scope.mode === 'play'){
 		    return;
 		}
