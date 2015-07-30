@@ -4,10 +4,10 @@
       <div class="row decor_area">
 	<div id="decor_dummy"></div>
 	<!--<div main-decor mode='play' prompt='Loading, please wait...' class="whitebackground decor_svg decormain"></div>-->
-	<div ng-if="renderOn=='svg'">
+	<div ng-if="playOn=='svg'">
 	  <div main-decor mode='play' prompt='Loading, please wait...' class="whitebackground decor_svg decormain"></div>
 	</div>
-	<div ng-if="renderOn=='canvas'">
+	<div ng-if="playOn=='canvas'">
 	  <div main-decor mode='play' prompt='Loading, please wait...' backgroundonly class="whitebackground decor_svg decormain"></div>
 	  <div decorcanvas mode='play' class="decor_svg decormain"></div>
 	</div>
