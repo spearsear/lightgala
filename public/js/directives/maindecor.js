@@ -296,7 +296,7 @@ angular.module("lightgalaApp")
 		      scope.animate_defer.resolve("animate started");
 		  });
 	      }else{
-		  if(scope.mode == 'play' && scope.renderOn == 'canvas'){
+		  if(scope.mode == 'play' && scope.playOn == 'canvas'){
 		      scope.animate_defer.resolve("animate stopped");
 		      return;
 		  }
