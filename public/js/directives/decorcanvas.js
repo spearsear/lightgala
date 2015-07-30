@@ -4,7 +4,7 @@ angular.module("lightgalaApp")
     return {
 	restrict: 'EA',
 	templateUrl: "../../partials/decorcanvas.html",
-	controller: ["$scope","$element","$q","$timeout","lightService","lightSvgsService",function($scope,$element,$q,$timeout,lightService,lightSvgsService){	
+	controller: ["$scope","$element","$q","$timeout","lightService","lightSvgsService","utilService",function($scope,$element,$q,$timeout,lightService,lightSvgsService,utilService){	
 	    $scope.mode = $element.attr('mode'); //or view from attrs
 	    $scope.margins = {left: 14, right: 14, top: 10, bottom: 10};
 	    $scope.loadDecor();
@@ -18,7 +18,7 @@ angular.module("lightgalaApp")
 		$scope.canvas = new fabric.Canvas('decorcanvas');
 		$scope.canvas.setWidth(document.getElementsByClassName("decor_svg")[0].getBoundingClientRect().width);
 		$scope.canvas.setHeight($scope.canvas.getWidth() * $scope.data.decor.decor_aspect_ratio);
-		$timeout($scope.renderDecorLinesOnCanvas,1);
+		$scope.renderDecorLinesOnCanvas();
 	    };
 
 	    //deprecated
@@ -37,7 +37,10 @@ angular.module("lightgalaApp")
 
 	    $scope.renderDecorLinesOnCanvas = function(){
 		for(var i=0;i<$scope.data.decor.decor_lines.length;i++){
-		    $scope.renderDecorLineOnCanvas($scope.data.decor.decor_lines[i].decor_line_id);
+		    $timeout((function(){
+			var j = i;
+			return function(){$scope.renderDecorLineOnCanvas($scope.data.decor.decor_lines[j].decor_line_id)};
+		    })(),0);
 		}
 	    };
 
@@ -92,6 +95,68 @@ angular.module("lightgalaApp")
 			    fill: ele.color
 			})
 			$scope.canvas.add(bulb);
+			if(ele.shadow){
+			    var sf_shadow = ele.scale_factor_shadow? ele.scale_factor_shadow: 1;
+			    var bbox_bulb = bulb.getBoundingRect();
+			    var //x = $scope.xScale(ele.x-Math.max(ele.w,ele.h)*5*sf_shadow),
+			        //y = $scope.yScale(ele.y-Math.max(ele.w,ele.h)*5*sf_shadow),
+			        //w = $scope.xScale(Math.max(ele.w,ele.h)*10*sf_shadow),
+				//h = $scope.yScale(Math.max(ele.w,ele.h)*10*sf_shadow);
+			        w = Math.max(bbox_bulb.width,bbox_bulb.height)*10*sf_shadow,
+			        h = Math.max(bbox_bulb.width,bbox_bulb.height)*10*sf_shadow,
+			        x = bbox_bulb.left-w/2,
+			        y = bbox_bulb.top-h/2;
+			    var center = {
+				x: ele.shadow.center.x * w,
+				y: ele.shadow.center.y * h
+			    };
+			    var focal = {
+				x: ele.shadow.focal.x * w,
+				y: ele.shadow.focal.y * h
+			    }
+			    var tr = ele.shadow.transform;
+			    var center_star = utilService.getTransformObject(center).rotate(tr.rotate*Math.PI/180).translate(tr.translate.x*w,tr.translate.y*h).scale(tr.scale.x,tr.scale.y).transform();
+			    var focal_star = utilService.getTransformObject(focal).rotate(tr.rotate*Math.PI/180).translate(tr.translate.x*w,tr.translate.y*h).scale(tr.scale.x,tr.scale.y).transform();
+			    //var transform_matrix = utilService.getTransformObject(focal).rotate(tr.rotate*Math.PI/180).translate(tr.translate.x*w,tr.translate.y*h).scale(tr.scale.x,tr.scale.y).getTransformMatrix();
+			    var x_str = "rotate("+tr.rotate+",0.5,0.5) translate("+tr.translate.x*w+","+tr.translate.y*h+") scale("+tr.scale.x+","+tr.scale.y+")";
+			    var transform_matrix = fabric.parseTransformAttribute(x_str);
+			    //radial gradient
+			    var rg = {
+				type: 'radial',
+				x1: center_star.x, //center.x,
+				y1: center_star.y,  //center.y,
+				r1: 0*w,
+				x2: focal_star.x,  //focal.x,
+				y2: focal_star.y,  //focal.y,
+				r2: ele.shadow.radius * w,
+				/*colorStops: {
+				    0: 'blue',
+				    0.5: 'white',
+				    1: 'rgba(0,0,255,0.5)'
+				},*/
+				//transformMatrix: [1,0,0,2,0,0],
+				//transformMatrix: transform_matrix,
+				colorStops: (function(){
+				    var color_stops = {};
+				    for(var i=0;i<ele.shadow.stops.length;i++){
+					color_stops[ele.shadow.stops[i].offset] = utilService.combineRgbWithOpacity(ele.shadow.stops[i].color,ele.shadow.stops[i].opacity);
+				    }
+				    return color_stops;
+				})()
+			    }
+			    var rect = new fabric.Rect({left: x,
+							top: y,
+							width: w,
+							height: h,
+							opacity: ele.shadow.opacity
+						       });
+			    rect.setGradient('fill', rg);
+
+			    //can we createRadialGradient from svg string: <radialGradient id="id_1437959762135_2_1437959762135_1_shadow" class="rg" cx="0.5" cy="0.5" r="0.31014492753623174" fx="0.5" fy="0.5" spreadMethod="pad" gradientTransform="rotate(0,0.5,0.5) translate(0.02173913043478254,0.21014492753623176) scale(1,1)"><stop offset="0" stop-color="rgb(106,52,5)" stop-opacity="1"><animate attributeName="stop-opacity" values="0;1;0;0" keyTimes="0;0.3333333333333333;0.6666666666666666;1" dur="1.75s" begin="0.2s" repeatCount="indefinite"></animate></stop><stop offset="1" stop-color="rgb(245,152,70)" stop-opacity="0"><animate attributeName="stop-opacity" values="0;0;0;0" keyTimes="0;0.3333333333333333;0.6666666666666666;1" dur="1.75s" begin="0.2s" repeatCount="indefinite"></animate></stop></radialGradient>
+			    //which can be obtained from
+			    //d3.select('#id_1437959762135_2_1437959762135_1_shadow')[0][0].outerHTML
+			    $scope.canvas.add(rect);
+			}
 		    }else{
 			fabric.Image.fromURL(light.url, function(oImg) {
 			    oImg.scale(scaleFactor);
