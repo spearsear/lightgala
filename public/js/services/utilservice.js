@@ -300,6 +300,16 @@ angular.module("lightgalaApp")
 	    //return '#'+Math.round(r * 255).toString(16)+Math.round(g * 255).toString(16)+Math.round(b * 255).toString(16);
 	    return [r,g,b];
 	},
+	combineRgbWithOpacity: function(rgbStr,opacity){
+	    var re = /rgb\((\d+),\s*(\d+),\s*(\d+)\)/;
+	    var rgb_m = re.exec(rgbStr);	    
+	    var val = rgbStr;
+            if(rgb_m){
+		var rgba = "rgba("+rgb_m[1]+','+rgb_m[2]+','+rgb_m[3]+','+opacity+")";
+		return rgba;
+	    }
+	    return val;	    
+	},
 	randomColor: function(){
 	    var self = this;
 	    var golden_ratio_conjugate = 0.618033988749895;
@@ -353,6 +363,76 @@ angular.module("lightgalaApp")
 	    }else{
 		return Math.round(num*1.25*100)/100 + 's';
 	    }
+	},
+	getTransformObject: function(point){
+	    return (function(){
+		var t_obj = {};
+		t_obj.point = point;
+		//transformMatrix: a,       b,       c,       d,       tx,          ty,          u,       v,       w
+		//                 x scale, y skew,  x skew,  y scale, x translate, y translate  0,       0,       1
+		//initialized to be identity matrix
+		t_obj.transform_matrix = {
+		    a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0
+		};
+		t_obj.translate = function(tx,ty){
+		    t_obj.transform_matrix.tx += tx;
+		    t_obj.transform_matrix.ty += ty;
+		    return t_obj;
+		};
+		t_obj.scale = function(sx,sy){
+		    t_obj.transform_matrix.a *= sx;
+		    t_obj.transform_matrix.b *= sy;
+		    t_obj.transform_matrix.c *= sx;
+		    t_obj.transform_matrix.d *= sy;
+		    t_obj.transform_matrix.tx *= sx;
+		    t_obj.transform_matrix.ty *= sy;
+		    return t_obj;
+		};
+		t_obj.rotate = function(angle){
+		    //angle in radius eg Math.PI/4
+		    var sin = Math.sin(angle);
+		    var cos = Math.cos(angle);
+		    var a = t_obj.transform_matrix.a;
+		    var b = t_obj.transform_matrix.b;
+		    var c = t_obj.transform_matrix.c;
+		    var d = t_obj.transform_matrix.d;
+		    var tx = t_obj.transform_matrix.tx;
+		    var ty = t_obj.transform_matrix.ty;
+		    t_obj.transform_matrix.a = a*cos - b*sin;
+		    t_obj.transform_matrix.b = a*sin + b*cos;
+		    t_obj.transform_matrix.c = c*cos - d*sin;
+		    t_obj.transform_matrix.d = c*sin + d*cos;
+		    t_obj.transform_matrix.tx = tx*cos - ty*sin;
+		    t_obj.transform_matrix.ty = tx*sin + ty*cos;		    
+		    return t_obj;
+		};
+		t_obj.transform = function(){
+		    var a = t_obj.transform_matrix.a;
+		    var b = t_obj.transform_matrix.b;
+		    var c = t_obj.transform_matrix.c;
+		    var d = t_obj.transform_matrix.d;
+		    var tx = t_obj.transform_matrix.tx;
+		    var ty = t_obj.transform_matrix.ty;
+		    var x_star = t_obj.point.x * a + t_obj.point.y * c + tx;
+		    var y_star = t_obj.point.x * b + t_obj.point.y * d + ty;
+		    return {
+			x: x_star,
+			y: y_star
+		    };
+		};
+		t_obj.getTransformMatrix = function(){
+		    //eg: gradientTransform="matrix(0.87421145,0,0,1,123.23725,-120)"
+		    var a = t_obj.transform_matrix.a;
+		    var b = t_obj.transform_matrix.b;
+		    var c = t_obj.transform_matrix.c;
+		    var d = t_obj.transform_matrix.d;
+		    var tx = t_obj.transform_matrix.tx;
+		    var ty = t_obj.transform_matrix.ty;
+		    //return "matrix("+a+","+b+","+c+","+d+","+tx+","+ty+")";
+		    return [a,b,c,d,tx,ty];
+		};
+		return t_obj;
+	    })();
 	},
 	anotherFunc: function(){
 	}
