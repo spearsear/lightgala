@@ -1143,11 +1143,15 @@ angular.module("lightgalaApp")
 
             scope.renderBackground = function(){
               //d3 = d3_global || scope.d3;
+	      document.onselectstart = function() { return false; };
               if(angular.isObject(d3) && d3.hasOwnProperty("version")){
                 if(scope.svg){
                   d3.select(ele[0]).selectAll("svg").remove();
                 }
-		var svg = d3.select(ele[0]).append("svg")
+		var svg = d3.select(ele[0]).append("svg").each(function(){
+                    d3.select(this).onselectstart = function() { return false; }; 
+                    d3.select(this).attr("unselectable","on"); 
+		});
 		//d3.select(ele[0]).select('svg').node().appendChild(scope.svg_defs);
 		if(scope.svg_defs){
 		    svg.node().appendChild(scope.svg_defs);
