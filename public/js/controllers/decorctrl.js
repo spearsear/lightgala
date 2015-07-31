@@ -64,7 +64,6 @@ angular.module("lightgalaApp")
 	      (navigator.vendor && navigator.vendor.indexOf('Apple') != -1)
 	  );
       })(); 
-      console.log(playOnCanvas);
       $scope.playOn = playOnCanvas ? 'canvas' : 'svg';  //canvas or svg
       //$scope.renderOn = 'svg';  //canvas or svg
       //initialize data with data in decordataservice(cached data)
