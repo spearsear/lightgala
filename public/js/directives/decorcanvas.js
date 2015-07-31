@@ -12,12 +12,18 @@ angular.module("lightgalaApp")
 	    $scope.renderCanvas = function(){
 		//we use fabic instead of directly draw on canvas
 		/*$scope.canvas = $element.find('canvas')[0];
-		$scope.canvas.width = document.getElementsByClassName("decor_svg")[0].getBoundingClientRect().width;
+		$scope.canvas.width = document.getElementsByClassName("decor_svg_or_canvas")[0].getBoundingClientRect().width;
 		$scope.canvas.height = $scope.canvas.width * $scope.data.decor.decor_aspect_ratio;
 		$scope.ctx = $scope.canvas.getContext("2d");*/
 		$scope.canvas = new fabric.Canvas('decorcanvas');
-		$scope.canvas.setWidth(document.getElementsByClassName("decor_svg")[0].getBoundingClientRect().width);
+		$scope.canvas.setWidth(document.getElementsByClassName("decor_svg_or_canvas")[0].getBoundingClientRect().width);
 		$scope.canvas.setHeight($scope.canvas.getWidth() * $scope.data.decor.decor_aspect_ratio);
+		if($scope.mode == 'play'){
+		    $('.decor_area').on('click', function(options) {
+			$scope.canvas.renderAll();
+			return false;
+		    });
+		}
 		$scope.renderDecorLinesOnCanvas();
 	    };
 
@@ -92,7 +98,8 @@ angular.module("lightgalaApp")
 			    top:$scope.yScale(ele.y),
 			    scaleX: scaleFactor,
 			    scaleY: scaleFactor,
-			    fill: ele.color
+			    //ele.color could be random, rgb, or a real color, so use bulbcolor and take rgb color from shadow
+			    fill: ele.color == 'rgb'? (ele.shadow? ele.shadow.stops[0].color : 'red') : (ele.bulbcolor? ele.bulbcolor: ele.color)
 			})
 			$scope.canvas.add(bulb);
 			if(ele.shadow){
@@ -115,19 +122,19 @@ angular.module("lightgalaApp")
 				y: ele.shadow.focal.y * h
 			    }
 			    var tr = ele.shadow.transform;
-			    var center_star = utilService.getTransformObject(center).rotate(tr.rotate*Math.PI/180).translate(tr.translate.x*w,tr.translate.y*h).scale(tr.scale.x,tr.scale.y).transform();
-			    var focal_star = utilService.getTransformObject(focal).rotate(tr.rotate*Math.PI/180).translate(tr.translate.x*w,tr.translate.y*h).scale(tr.scale.x,tr.scale.y).transform();
-			    //var transform_matrix = utilService.getTransformObject(focal).rotate(tr.rotate*Math.PI/180).translate(tr.translate.x*w,tr.translate.y*h).scale(tr.scale.x,tr.scale.y).getTransformMatrix();
-			    var x_str = "rotate("+tr.rotate+",0.5,0.5) translate("+tr.translate.x*w+","+tr.translate.y*h+") scale("+tr.scale.x+","+tr.scale.y+")";
+			    //var center_star = utilService.getTransformObject(center).rotate(tr.rotate*Math.PI/180).translate(tr.translate.x*w,tr.translate.y*h).scale(tr.scale.x,tr.scale.y).transform();
+			    //var focal_star = utilService.getTransformObject(focal).rotate(tr.rotate*Math.PI/180).translate(tr.translate.x*w,tr.translate.y*h).scale(tr.scale.x,tr.scale.y).transform();
+			    //var transform_matrix = utilService.getTransformObject(center).rotate(tr.rotate*Math.PI/180).translate(tr.translate.x*w,tr.translate.y*h).scale(tr.scale.x,tr.scale.y).getTransformMatrix();
+			    var x_str = "rotate("+(tr.rotate)+",0.5,0.5) translate("+(tr.translate.x*w)+","+(tr.translate.y*h)+") scale("+tr.scale.x+","+tr.scale.y+")";
 			    var transform_matrix = fabric.parseTransformAttribute(x_str);
 			    //radial gradient
 			    var rg = {
 				type: 'radial',
-				x1: center_star.x, //center.x,
-				y1: center_star.y,  //center.y,
+				x1: center.x, //center_star.x,
+				y1: center.y,  //center_star.y,
 				r1: 0*w,
-				x2: focal_star.x,  //focal.x,
-				y2: focal_star.y,  //focal.y,
+				x2: focal.x,  //focal_star.x,
+				y2: focal.y,  //focal_star.y,
 				r2: ele.shadow.radius * w,
 				/*colorStops: {
 				    0: 'blue',
@@ -151,6 +158,8 @@ angular.module("lightgalaApp")
 							opacity: ele.shadow.opacity
 						       });
 			    rect.setGradient('fill', rg);
+			    //fabric should have set this in rg, they will fix this
+			    rect.fill.gradientTransform = transform_matrix;
 
 			    //can we createRadialGradient from svg string: <radialGradient id="id_1437959762135_2_1437959762135_1_shadow" class="rg" cx="0.5" cy="0.5" r="0.31014492753623174" fx="0.5" fy="0.5" spreadMethod="pad" gradientTransform="rotate(0,0.5,0.5) translate(0.02173913043478254,0.21014492753623176) scale(1,1)"><stop offset="0" stop-color="rgb(106,52,5)" stop-opacity="1"><animate attributeName="stop-opacity" values="0;1;0;0" keyTimes="0;0.3333333333333333;0.6666666666666666;1" dur="1.75s" begin="0.2s" repeatCount="indefinite"></animate></stop><stop offset="1" stop-color="rgb(245,152,70)" stop-opacity="0"><animate attributeName="stop-opacity" values="0;0;0;0" keyTimes="0;0.3333333333333333;0.6666666666666666;1" dur="1.75s" begin="0.2s" repeatCount="indefinite"></animate></stop></radialGradient>
 			    //which can be obtained from
