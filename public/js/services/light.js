@@ -150,6 +150,10 @@ angular.module("lightgalaApp")
 	    //when a page has base href, it changes where IRI looks, so need to point back to current page
 	    .attr("fill","url("+$window.location+"#light-"+light.color+"-"+id+"-"+segment+"-"+set+")")
 	    .attr("fill-opacity",light.bulb_fillopacity);
+	  append_to.each(function(d){
+	    //set bulbcolor in data so random color can be rendered as a real color in canvas
+	    d.bulbcolor = light.color;
+	  });
 	  append_to.append("path")
 	    .attr("class","ray")
 	    .attr("d",light.ray_path)
@@ -205,7 +209,7 @@ angular.module("lightgalaApp")
             //"basicXmasLight basicLight basicLight--"+light.color()
             //return self.light_type + " " + self.__proto__.light_type + " " + self.__proto__.light_type + "--" + light.color;
 	      return self.light_type + " " + self.__proto__.light_type;
-	  })
+	  });
 	  append_to.select("path.outline")
 	    .attr("d",light.outline_path);
 	  append_to.select("rect.base")
@@ -217,6 +221,10 @@ angular.module("lightgalaApp")
 	    //.attr("fill","url(#light-"+light.color+")")
 	    .attr("bulbcolor",light.color)
 	    .attr("d",light.bulb_path);
+	  append_to.each(function(d){
+	    //set bulbcolor in data so random color can be rendered as a real color in canvas
+	    d.bulbcolor = light.color;
+	  });
 	  append_to.select("path.ray")
 	    .attr("d",light.ray_path)
 	    .attr("style",light.ray_style)
