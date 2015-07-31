@@ -451,7 +451,7 @@ hr {
     color: #B22222;
     background-color: rgba(200,200,200,0.3);
 }
-div.decormain div.weather {
+div.weather {
     position: absolute;
     top: 0px;
 }
@@ -481,11 +481,11 @@ div.decormain div.weather {
   bottom: 0;
   margin-top: 0;
 }
-/*div decor_svg aspect ratio*/
+/*div decor_svg_or_canvas aspect ratio*/
 #decor_dummy {
     padding-top: 65%;
 }
-.decor_svg {
+.decor_svg_or_canvas {
     position: absolute;
     top: 0;
     bottom: 0;
