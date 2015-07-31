@@ -23,7 +23,7 @@ angular.module("lightgalaApp")
 			$scope.canvas.renderAll();
 			return false;
 		    };
-		    $('.decor_area').on('touchstart', onclickfunc);
+		    $('.decor_area').on('touchstart touchmove touchend', onclickfunc);
 		    $('.decor_area').on('click', onclickfunc);
 		}
 		$scope.renderDecorLinesOnCanvas();
