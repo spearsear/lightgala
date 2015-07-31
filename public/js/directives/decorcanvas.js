@@ -19,10 +19,12 @@ angular.module("lightgalaApp")
 		$scope.canvas.setWidth(document.getElementsByClassName("decor_svg_or_canvas")[0].getBoundingClientRect().width);
 		$scope.canvas.setHeight($scope.canvas.getWidth() * $scope.data.decor.decor_aspect_ratio);
 		if($scope.mode == 'play'){
-		    $('.decor_area').on('click', function(options) {
+		    var onclickfunc = function() {
 			$scope.canvas.renderAll();
 			return false;
-		    });
+		    };
+		    $('.decor_area').on('touchstart', onclickfunc);
+		    $('.decor_area').on('click', onclickfunc);
 		}
 		$scope.renderDecorLinesOnCanvas();
 	    };
