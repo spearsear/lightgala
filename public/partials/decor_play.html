@@ -5,11 +5,11 @@
 	<div id="decor_dummy"></div>
 	<!--<div main-decor mode='play' prompt='Loading, please wait...' class="whitebackground decor_svg decormain"></div>-->
 	<div ng-if="playOn=='svg'">
-	  <div main-decor mode='play' prompt='Loading, please wait...' class="whitebackground decor_svg decormain"></div>
+	  <div main-decor mode='play' prompt='Loading, please wait...' class="whitebackground decor_svg_or_canvas"></div>
 	</div>
 	<div ng-if="playOn=='canvas'">
-	  <div main-decor mode='play' prompt='Loading, please wait...' backgroundonly class="whitebackground decor_svg decormain"></div>
-	  <div decorcanvas mode='play' class="decor_svg decormain"></div>
+	  <div main-decor mode='play' prompt='Loading, please wait...' backgroundonly class="whitebackground decor_svg_or_canvas"></div>
+	  <div decorcanvas mode='play' class="decor_svg_or_canvas"></div>
 	</div>
 	<div class='main_spinner'><span us-spinner="{radius:30, width:8, length: 16}" spinner-key="spinner-1"></span></div>
 	<div ads adname='ads_decor'></div>
