@@ -18,7 +18,7 @@ angular.module("lightgalaApp")
 			  position: 'bottom',
 			  hideOnClick: true
 		      });
-		      $('.tool-item[toolbox-name='+toolname+']').on('click',function(e){
+		      $('.tool-item[toolbox-name='+toolname+']').on('click touchstart',function(e){
 			  scope.selectTool($(this).attr("name"));
 		      });      	  
 	      }
