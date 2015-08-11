@@ -1,4 +1,14 @@
 angular.module("lightgalaApp")
+  .directive("ngMobileClick", [function () {
+    return function (scope, elem, attrs) {
+        elem.bind("touchstart click", function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            scope.$apply(attrs["ngMobileClick"]);
+        });
+    }
+  }])
   .directive("tools",['$timeout','utilService',function($timeout,utilService){
     return {
       restrict: 'EA',
