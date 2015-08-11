@@ -36,7 +36,9 @@ angular.module("lightgalaApp")
 	      }
 	      if(scope.current.music.track){
 		  //toggle stop music when user leave page
-		  toolService.getTool('musictool').invoke().afterinvoke(scope);
+		  if(scope.current.music.playing){
+		      toolService.getTool('musictool').invoke().afterinvoke(scope);
+		  }
 		  //createjs.Sound.removeAllSounds();
 		  scope.current.music.track.destruct();
 		  scope.current.music.track = undefined;
