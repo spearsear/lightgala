@@ -517,7 +517,10 @@ angular.module("lightgalaApp")
       };
       $scope.toggleDecorLine = function(decor_line_id){
 	  var i = utilService.getArrayIndexWithPropertyEqualTo($scope.data.decor.decor_lines,"decor_line_id",decor_line_id);
-	  var dl = $scope.svg.select("g[decor_line_id='"+decor_line_id+"']");
+	  //!!! playmode maindecor scope is child of controller scope, toggle ruler will fail
+          //since $scope.svg is undefined in play mode, controller $scope does not have svg
+	  //var dl = $scope.svg.select("g[decor_line_id='"+decor_line_id+"']");
+	  var dl = d3.select('svg').select("g[decor_line_id='"+decor_line_id+"']");
 	  if(dl.attr("opacity") != null & dl.attr("opacity")!=1){
 	      dl.transition().duration(500).attr("opacity",1);
 	      $scope.data.decor.decor_lines[i].decor_line_visible = true;
