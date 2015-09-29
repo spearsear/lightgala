@@ -169,14 +169,18 @@ angular.module("lightgalaApp")
 			    $scope.canvas.add(rect);
 			}
 		    }else{
-			fabric.Image.fromURL(light.url, function(oImg) {
-			    oImg.scale(scaleFactor);
-			    oImg.setLeft($scope.xScale(ele.x-ele.w/2));
-			    oImg.setTop($scope.yScale(ele.y-ele.h/2));
-			    oImg.setWidth(light.size.width);
-			    oImg.setHeight(light.size.height);
-			    $scope.canvas.add(oImg);
-			});
+			fabric.Image.fromURL(light.url, (function(){
+			    var ele_cp = ele;
+			    return function(oImg) {
+				//oImg.scale(scaleFactor);
+				oImg.scale(ele_cp.scale_factor);
+				oImg.setLeft($scope.xScale(ele_cp.x-ele_cp.w/2));
+				oImg.setTop($scope.yScale(ele_cp.y-ele_cp.h/2));
+				oImg.setWidth($scope.xScale(light.size.width));
+				oImg.setHeight($scope.yScale(light.size.height));
+				oImg.setAngle(ele_cp.rotate_degree);
+				$scope.canvas.add(oImg);
+			    }})());
 		    }
 		    /*we use fabric object instead of directly draw on canvas
 		    $scope.ctx.save();
