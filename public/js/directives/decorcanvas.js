@@ -43,7 +43,7 @@ angular.module("lightgalaApp")
 		img.src = $scope.data.decor.backgroundurl;
 	    };
 
-	    $scope.renderDecorLinesOnCanvas = function(){
+	    /*$scope.renderDecorLinesOnCanvas = function(){
 		for(var i=0;i<$scope.data.decor.decor_lines.length;i++){
 		    if($scope.data.decor.decor_lines[i].decor_line_type == 'measurementScaling' &&
 		       $scope.mode == 'play'){
@@ -54,7 +54,23 @@ angular.module("lightgalaApp")
 			})(),0);
 		    }
 		}
-	    };
+	    };*/
+
+	    //renderDecorLinesOnCanvas using requestAnimateFrame
+	    $scope.renderDecorLinesOnCanvas = function(time){
+		//render one decorline
+		var i = 0, j = $scope.data.decor.decor_lines.length;
+		function renderNextDecorLine(){
+		    if(i<j){
+			$scope.renderDecorLineOnCanvas($scope.data.decor.decor_lines[i].decor_line_id);
+			i++;
+			window.requestNextAnimateFrame(renderNextDecorLine);
+		    }else{
+			console.log('render canvas completed');
+		    }
+		}
+		window.requestNextAnimateFrame(renderNextDecorLine);
+	    }
 
 	    $scope.renderDecorLineOnCanvas = function(decor_line_id){
 		var decor_line = _.find($scope.data.decor.decor_lines,function(dl){
