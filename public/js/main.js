@@ -136,6 +136,23 @@ angular.module("lightgalaApp",["d3",
     .run(function(){
 	FastClick.attach(document.body);
     })
+    .run(function(){
+	window.requestNextAnimateFrame = (function(){
+	    return window.requestAnimateFrame ||
+		window.webkitRequestAnimateFrame ||
+		window.mozRequestAnimateFrame ||
+		window.msRequestAnimateFrame ||
+		function(callback,element){
+		    var self = this, start, finish;
+		    window.setTimeout(function(){
+			start = +new Date();
+			callback(start);
+			finish = +new Date();
+			self.timeout = 1000 / 60 - (finish - start);
+		    },self.timeout);
+		}
+	})();
+    })
     /*.run(function($rootScope,$location){
 	$rootScope.$on('$routeChangeStart',function(ev,next,curr){
 	    if(next.$$route){
