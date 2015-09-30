@@ -62,7 +62,11 @@ angular.module("lightgalaApp")
 		var i = 0, j = $scope.data.decor.decor_lines.length;
 		function renderNextDecorLine(){
 		    if(i<j){
-			$scope.renderDecorLineOnCanvas($scope.data.decor.decor_lines[i].decor_line_id);
+			if($scope.data.decor.decor_lines[i].decor_line_type == 'measurementScaling' &&
+			   $scope.mode == 'play'){
+			}else{
+			    $scope.renderDecorLineOnCanvas($scope.data.decor.decor_lines[i].decor_line_id);
+			}
 			i++;
 			window.requestNextAnimateFrame(renderNextDecorLine);
 		    }else{
