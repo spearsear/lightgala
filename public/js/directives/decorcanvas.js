@@ -45,10 +45,14 @@ angular.module("lightgalaApp")
 
 	    $scope.renderDecorLinesOnCanvas = function(){
 		for(var i=0;i<$scope.data.decor.decor_lines.length;i++){
-		    $timeout((function(){
-			var j = i;
-			return function(){$scope.renderDecorLineOnCanvas($scope.data.decor.decor_lines[j].decor_line_id)};
-		    })(),0);
+		    if($scope.data.decor.decor_lines[i].decor_line_type == 'measurementScaling' &&
+		       $scope.mode == 'play'){
+		    }else{
+			$timeout((function(){
+			    var j = i;
+			    return function(){$scope.renderDecorLineOnCanvas($scope.data.decor.decor_lines[j].decor_line_id)};
+			})(),0);
+		    }
 		}
 	    };
 
