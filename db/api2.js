@@ -946,10 +946,12 @@ agenda.define('send email after save',function(job,done){
 	    to: emails,
 	    subject: decor.decor.address.label + ' is lighting up',
 	    text: 'Hi, there,\n' + decor.decor.designer + ' has recently designed lighting at ' + decor.decor.address.label + '.\n' +
-		'Please go to ' + host_str + ' and search for the address. \nEnjoy!',
-	    html: 'Hi, there,<br>' + decor.decor.designer + ' has recently designed lighting at <strong>' + decor.decor.address.label + '</strong>.\n<br>' +
-		'Please <a href="' + host_str + '/decor/'+ decor._id +'">click here</a> to enjoy the lighting\n<br>'+
-		'You can <a href="'+ host_str + '/decor/">design your own</a> also.<br> Enjoy!'
+		'Please go to ' + host_str + ' and search for the address. \n'+
+		'If you want to talk to a decoration professional in the area regarding your lighting project, please reply this email, tell us what you want, your phone and best time to reach, we will get back to you.<br><br>Enjoy!<br><br>LightGala Team',
+	    html: 'Hi, there,<br><br>' + decor.decor.designer + ' has recently designed lighting at <strong>' + decor.decor.address.label + '</strong>.\n<br><br>' +
+		'Please <a href="' + host_str + '/decor/'+ decor._id +'">click here</a> to enjoy the lighting.\n<br><br>'+
+		'You can <a href="'+ host_str + '/decor/">design your own</a> also.<br><br>'+
+		'If you want to talk to a decoration professional in the area regarding your lighting project, please reply this email, tell us what you want, your phone and best time to reach, we will get back to you.<br><br>Enjoy!<br><br>LightGala Team'
 	};
 
 	if(emails.length>1){
