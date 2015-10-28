@@ -16,6 +16,7 @@ angular.module("lightgalaApp")
 		$scope.canvas.height = $scope.canvas.width * $scope.data.decor.decor_aspect_ratio;
 		$scope.ctx = $scope.canvas.getContext("2d");*/
 		$scope.canvas = new fabric.Canvas('decorcanvas');
+		$scope.canvas.renderOnAddRemove = false;
 		$scope.canvas.setWidth(document.getElementsByClassName("decor_svg_or_canvas")[0].getBoundingClientRect().width);
 		$scope.canvas.setHeight($scope.canvas.getWidth() * $scope.data.decor.decor_aspect_ratio);
 		if($scope.mode == 'play'){
@@ -71,6 +72,7 @@ angular.module("lightgalaApp")
 			window.requestNextAnimateFrame(renderNextDecorLine);
 		    }else{
 			console.log('render canvas completed');
+			$scope.canvas.renderAll();
 		    }
 		}
 		window.requestNextAnimateFrame(renderNextDecorLine);
