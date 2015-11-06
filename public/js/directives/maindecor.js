@@ -560,7 +560,15 @@ angular.module("lightgalaApp")
 		    scope.current.decor = {};
 		    event.preventDefault();
 		}
-            });
+            }).bind("keydown",function(event){
+		if (event.which === 8 && !$(event.target).is("input,textarea")) {
+		    event.preventDefault();
+		    if(scope.current.decor.line_id){
+			//delete key remove current decor line
+			scope.delSelectedInDecorLine(scope.current.decor.line_id);
+		    }
+		}
+	    });
 	      
             scope.renderDecorLines = function(decor_lines){
               scope.svg.select("g.decor g.decor_lines").selectAll("g.decor_line").remove();
@@ -926,7 +934,9 @@ angular.module("lightgalaApp")
 		   })
 		   .on("click",function(){
 		     //svg click event will not fire
-		     d3.event.stopPropagation();
+		     if(d3.event){
+			 d3.event.stopPropagation();
+		     }
 
 		     if(scope.mode === 'play'){
 			 return;
