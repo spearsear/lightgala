@@ -49,6 +49,7 @@ var decorSchema = new mongoose.Schema({
 	address: {label: String, coords: {type: [Number], index:'2d'}, geo: {lat: Number, lng: Number}},
 	tag: String,
 	title: String,
+	desc: String,
 	publish: {type: Boolean, default: false},
 	askpro: {type: Boolean, default: false},
 	allowcomment: {type: Boolean, default: true},
@@ -209,6 +210,11 @@ router.get('/api/decors/:id/',myaccessctrl.ensureDesignerOfDecor.bind({Decor:Dec
 	    if (err) {
 		console.log("error occured in findByIdAndUpdate " + err);
 		return next(err);
+	    } else {
+		var emailDate = Date.create("10 seconds from now");
+		if(!req.user || req.user._id != decor.decor.user_id._id.toString()){
+		    agenda.schedule(emailDate, 'send email while playing', req.params.id);
+		}
 	    }
 	    res.json(decor);
 	});
@@ -236,15 +242,15 @@ router.post('/api/decors/',
 	    return next(err);
 	}
 	if(true){
-	    //decode backgroundurl base64 string
-	    var filename = 'public/img/backgrounds/' + decor._doc._id.toString()+'.jpg';
-	    base64_decode(decor._doc.decor.backgroundurl,filename);
 	    //schedule email
 	    var emailDate = Date.create("2 minutes from now");
 	    agenda.schedule(emailDate, 'send email after save', decor._id);//.repeatEvery('1 week');
 	    if(decor.decor.askpro){
 		agenda.schedule(Date.create("3 minutes from now"), 'invite pro to design', decor._id);//.repeatEvery('1 week');
 	    }
+	    //decode backgroundurl base64 string
+	    var filename = 'public/img/backgrounds/' + decor._doc._id.toString()+'.jpg';
+	    base64_decode(decor._doc.decor.backgroundurl,filename);
 	}
 	res.json(decor);
     })
@@ -267,12 +273,6 @@ router.put('/api/decors/:id',
 				    return next(err);
 				}
 
-				//decode backgroundurl base64 string
-				if (true) {
-				    var filename = 'public/img/backgrounds/' + decor._doc._id.toString()+'.jpg';
-				    base64_decode(decor._doc.decor.backgroundurl,filename);
-				}
-
 				//Suger: var alertDate = Date.create('Next ' + show.airsDayOfWeek + ' at ' + show.airsTime).rewind({ hour: 2});
 				//Next Saturday at 8:00 PM
 				var emailDate = Date.create("2 minutes from now");
@@ -280,6 +280,13 @@ router.put('/api/decors/:id',
 				if(decor.decor.askpro){
 				    agenda.schedule(Date.create("3 minutes from now"), 'invite pro to design', decor._id);//.repeatEvery('1 week');
 				}
+
+				//decode backgroundurl base64 string
+				if (true) {
+				    var filename = 'public/img/backgrounds/' + decor._doc._id.toString()+'.jpg';
+				    base64_decode(decor._doc.decor.backgroundurl,filename);
+				}
+
 				res.json(decor);
 			    });
 })
@@ -950,8 +957,49 @@ agenda.define('send email after save',function(job,done){
 		'If you want to talk to a decoration professional in the area regarding your lighting project, please reply this email, tell us what you want, your phone and best time to reach, we will get back to you.<br><br>Enjoy!<br><br>LightGala Team',
 	    html: 'Hi, there,<br><br>' + decor.decor.designer + ' has recently designed lighting at <strong>' + decor.decor.address.label + '</strong>.\n<br><br>' +
 		'Please <a href="' + host_str + '/decor/'+ decor._id +'">click here</a> to enjoy the lighting.\n<br><br>'+
+		'designer quote: ' + 
+		'"' + decor.decor.desc + '"<br><br>' + 
 		'You can <a href="'+ host_str + '/decor/">design your own</a> also.<br><br>'+
 		'If you want to talk to a decoration professional in the area regarding your lighting project, please reply this email, tell us what you want, your phone and best time to reach, we will get back to you.<br><br>Enjoy!<br><br>LightGala Team'
+	};
+
+	if(emails.length>1){
+	    smtpTransport.sendMail(mailOptions,function(err,info){
+		if(err){
+		    console.log(err);
+		}else{
+		    smtpTransport.close();
+		    done();
+		}
+	    })
+	}else{
+	    console.log('no emails specified, skip sending emails');
+	}
+    });
+});
+
+agenda.define('send email while playing',function(job,done){
+    Decor.findOne({_id:job.attrs.data}).populate('decor.user_id').exec(function(err,decor){
+	var email_user = [decor.decor.user_id].map(function(user){
+	    return !user.fakemail? user.email : 'spearsear@gmail.com';
+	})
+
+	var emails_emailto = decor.decor.emailto?decor.decor.emailto:'';
+	var emails = email_user.join(',');
+
+	var smtpTransport = nodemailer.createTransport({
+	    service: 'Gmail',
+	    auth: {user:config.EMAIL_ADMIN,pass:config.EMAIL_ADMIN_PASS}
+	});
+
+	var mailOptions = {
+	    from: 'LightGala <'+config.EMAIL_ADMIN+'>',
+	    to: emails,
+	    subject: decor.decor.address.label + ' is watching your lighting design',
+	    text: 'Hi ' + decor.decor.designer + ',\n ' + decor.decor.address.label + ' is currently watching your lighting design.\n' +
+		'Now is the best time to follow up wit the prospect.<br><br>Good luck!<br><br>LightGala Team',
+	    html: 'Hi ' + decor.decor.designer + ',<br><br><strong>' + decor.decor.address.label + '</strong> is currently watching your <a href="' + host_str + '/decor/' + decor._id + '">lighting design</a>.<br><br>' +
+		'Now is the best time to follow up wit the prospect.<br><br>Good luck!<br><br>LightGala Team'
 	};
 
 	if(emails.length>1){
