@@ -536,6 +536,32 @@ angular.module("lightgalaApp")
 	  }
 	  $scope.decor_line_element_exit_func(decor_line_id);
       };
+      $scope.delSelectedInDecorLine = function(decor_line_id){
+	  var i = utilService.getArrayIndexWithPropertyEqualTo($scope.data.decor.decor_lines,"decor_line_id",decor_line_id);
+	  if($scope.current.decor.line_element_id){
+	      //line_element_id is selected, delete only this line element
+	      utilService.removeArrayElementSatisfy($scope.data.decor.decor_lines[i].elements,function(ele){return ele.id === $scope.current.decor.line_element_id});	      
+	      $scope.current.decor.line_element_id = null;
+	  }else{
+	      //line_element_id is not selected, delete all elements of last group in current decor_line
+	      var lastgroup = _.max($scope.data.decor.decor_lines[i].elements,function(ele){return ele.group}).group;
+	      /*while($scope.data.decor.decor_lines[i].elements.length > 0) {
+		  $scope.data.decor.decor_lines[i].elements.pop();
+	      }*/
+	      utilService.removeArrayElementSatisfy($scope.data.decor.decor_lines[i].elements,function(ele){return ele.group === lastgroup});	      
+	      $scope.current.decor = {};	    
+	  }
+	  $scope.decor_line_element_exit_func(decor_line_id);
+	  $scope.delTraceLine(decor_line_id);
+	  //click on last element in decor_line
+	  /*if($scope.data.decor.decor_lines[i].elements.length>0){
+	      var decor_line_element_id = $scope.data.decor.decor_lines[i].elements[$scope.data.decor.decor_lines[i].elements.length-1].id;
+	      d3.select("g[decor_line_id='"+decor_line_id+"'][decor_line_element_id='"+decor_line_element_id+"']").each(function(d, i) {
+		  var onClickFunc = d3.select(this).on("click");
+		  onClickFunc.apply(this, [d, i]);
+	      });
+	  }*/
+      };
       /*$scope.selectDecorLine = function(decor_line){
 	  //decor_line_type is fed from w.name
 	  return decor_line.decor_line_type.toLowerCase() == $scope.current.widget.line_type.toLowerCase();
