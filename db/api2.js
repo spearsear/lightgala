@@ -154,7 +154,8 @@ router.get('/api/decors',function(req,res,next){
 	    eval('query'+unescape(req.query.criteria));
 	}
     }
-    query.exec(function(err,decors){
+    /* uncomment this if want to base64_decode some img not decoded yet
+      query.exec(function(err,decors){
 	//base64decode backgroundurl to /img/backgrounds if it does not exist
 	for(var i=0;i<decors.length;i++){
 	    var filename = 'public/img/backgrounds/' + decors[i]._doc._id.toString()+'.jpg';
@@ -170,12 +171,13 @@ router.get('/api/decors',function(req,res,next){
 		}
 	    })());
 	}
-    });
+    });*/
     if(req.query.select){
 	query.select(req.query.select);
     }
     var page = req.query.page, perPage = 12;//20;
-    query.paginate({limit:perPage,offset:perPage * page},function(err,total,decors){
+    //!!!attention: sort will cause err: Overflow sort stage buffered data usage of 33554527 bytes exceeds internal limit of 33554432 bytes because backgroundurl is too big to fit in memory then sort, so create an index on create_time on at database side on mongolab
+    query.sort({create_time: -1}).paginate({limit:perPage,offset:perPage * page},function(err,total,decors){
 	if(err){
 	    res.status(500).send('Data fetching broken');
 	}else{
