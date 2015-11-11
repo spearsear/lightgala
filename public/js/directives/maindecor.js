@@ -556,9 +556,9 @@ angular.module("lightgalaApp")
 			for(var i=0;i<scope.data.decor.decor_lines.length;i++){
 			    scope.delTraceLine(scope.data.decor.decor_lines[i].decor_line_id);
 			}
+			scope.current.decor = {};
+			event.preventDefault();
 		    }
-		    scope.current.decor = {};
-		    event.preventDefault();
 		}
             }).bind("keydown",function(event){
 		if (event.which === 8 && !$(event.target).is("input,textarea")) {
@@ -566,6 +566,20 @@ angular.module("lightgalaApp")
 		    if(scope.current.decor.line_id){
 			//delete key remove current decor line
 			scope.delSelectedInDecorLine(scope.current.decor.line_id);
+		    }
+		}
+		if (event.which === 187 && scope.current.decor.line_id) {
+		    event.preventDefault();
+		    if(scope.current.decor.line_id){
+			//+ key sizeup the selected element
+			scope.selectTool('sizeuptool');
+		    }
+		}
+		if (event.which === 189 && scope.current.decor.line_id) {
+		    event.preventDefault();
+		    if(scope.current.decor.line_id){
+			//- key sizedown the selected element
+			scope.selectTool('sizedowntool');
 		    }
 		}
 	    });
@@ -893,7 +907,7 @@ angular.module("lightgalaApp")
 		     var outline_ele = d3.select(this).select(".outline").node(),
 		         bbox = outline_ele.getBBox(),
 		         //scaleFactor = scope.rScale(d.scale_factor*3);
-			 scaleFactor = scope.rScale(d.scale_factor*1.2);
+			 scaleFactor = scope.rScale(d.scale_factor*3);
 		     return "translate("+scope.xScale(d.x-scope.xScale_reverse(bbox.x+bbox.width/2)-scope.xScale_reverse(bbox.x+bbox.width/2)*(scaleFactor-1))+","+scope.yScale(d.y-scope.yScale_reverse(bbox.y+bbox.height/2)-scope.yScale_reverse(bbox.y+bbox.height/2)*(scaleFactor-1))+") scale("+scaleFactor+") rotate("+scope.element_config.rotate(d.rotate_degree)+","+(bbox.x+bbox.width/2)+","+(bbox.y+bbox.height/2)+")";
 		     });		       
 		   })
@@ -1059,6 +1073,7 @@ angular.module("lightgalaApp")
 		scope.svg.on("click",svg_onclick_func);
 		scope.svg.on("touchstart",svg_onclick_func);
 		scope.svg.on("mouseup",svg_mouseup_func);
+		scope.svg.on("touchend",svg_mouseup_func);
 
             }//end renderDecorLine function
 
